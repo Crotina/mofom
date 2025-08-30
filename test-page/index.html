@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>TEST PAGE</title>
+		<link rel="stylesheet" href="style.css" />
+	</head>
+	<body>
+		<!-- MAIN PAGE -->
+		<div id="pg1" class="pg">
+			<h1>TEST PAGE</h1>
+			<button onclick="startGame()">click button to start</button>
+		</div>
+		<!-- IN GAME -->
+		<div id="pg2" class="pg">
+			<h1 id="pg2Title">颜色匹配挑战</h1>
+			<div class="answerArea">
+				<div id="as1"><img src="files/default.png" alt="答案1"></div>
+				<div id="as2"><img src="files/default.png" alt="答案2"></div>
+				<div id="as3"><img src="files/default.png" alt="答案3"></div>
+				<div id="as4"><img src="files/default.png" alt="答案4"></div>
+				<div id="as5"><img src="files/default.png" alt="答案5"></div>
+				<div id="as6"><img src="files/default.png" alt="答案6"></div>
+			</div>
+			
+			<div id="selectionArea">
+				<p>selected: <span id="currentSelectedColor"></span></p>
+				<div class="colorOptions">
+					<div id="colorOption1"><img src="files/1.png" alt="红色"></div>
+					<div id="colorOption2"><img src="files/2.png" alt="绿色"></div>
+					<div id="colorOption3"><img src="files/3.png" alt="蓝色"></div>
+					<div id="colorOption4"><img src="files/4.png" alt="粉色"></div>
+					<div id="colorOption5"><img src="files/5.png" alt="黄色"></div>
+					<div id="colorOption6"><img src="files/6.png" alt="黑色"></div>
+				</div>
+			</div>
+			<button onclick="checkAnswer()">check</button>
+			<!-- <div id="feedback"></div> -->
+		</div>
+		<!-- statistics -->
+		<div id="pg3" class="pg">
+			<h1>pg3</h1>
+			<p>all correct</p>
+			<button onclick="restartGame()">do it again!</button>
+		</div>
+		
+		<script src="js.js"></script>
+	</body>
+</html>

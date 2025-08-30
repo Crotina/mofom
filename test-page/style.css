@@ -1,0 +1,132 @@
+.pg {
+	display: none;
+	flex-direction: column;
+	align-items: center;
+	flex-wrap: nowrap;
+	padding: 20px;
+}
+
+body {
+	font-family: Arial, sans-serif;
+	background-color: #f5f5f5;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
+}
+
+h1 {
+	color: #333;
+	margin-bottom: 20px;
+}
+
+.answerArea {
+	display: flex;
+	gap: 15px;
+	margin: 30px 0;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.answerArea div {
+	width: 80px;
+	height: 80px;
+	border: 2px solid #333;
+	border-radius: 8px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	background-color: #fff;
+	transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.answerArea div:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.answerArea div img {
+	max-width: 90%;
+	max-height: 90%;
+}
+
+#selectionArea {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 15px;
+	margin-bottom: 30px;
+}
+
+.colorOptions {
+	display: flex;
+	gap: 10px;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.colorOptions div {
+	width: 60px;
+	height: 60px;
+	border: 2px solid #333;
+	border-radius: 8px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #fff;
+	transition: transform 0.2s;
+}
+
+.colorOptions div:hover {
+	transform: scale(1.1);
+}
+
+.colorOptions div img {
+	max-width: 90%;
+	max-height: 90%;
+}
+
+#currentSelectedColor {
+	font-weight: bold;
+	color: #e74c3c;
+}
+
+button {
+	padding: 12px 25px;
+	background-color: #3498db;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 16px;
+	font-weight: bold;
+	transition: background-color 0.3s;
+	margin: 10px;
+}
+
+button:hover {
+	background-color: #2980b9;
+}
+
+#feedback {
+	margin-top: 20px;
+	padding: 15px;
+	border-radius: 5px;
+	text-align: center;
+	font-weight: bold;
+	min-height: 30px;
+}
+
+/* .correct {
+	background-color: #d4edda;
+	color: #155724;
+} */
+
+/* .incorrect {
+	background-color: #f8d7da;
+	color: #721c24;
+} */
