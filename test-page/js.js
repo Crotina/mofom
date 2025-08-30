@@ -209,6 +209,7 @@ document.addEventListener("DOMContentLoaded", function(){
                isProcessingClick = false;
            }, 100);
        });
+
    }
     
     // 为答案区域添加点击事件
@@ -268,3 +269,22 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     });
 });
+
+function triggerHiddenLink(url) {
+  // 创建 a 标签
+  const a = document.createElement('a');
+  
+  // 设置属性
+  a.href = url;
+  a.style.display = 'none';
+  a.target = '_blank'; // 可选：在新标签页打开
+
+  // 添加到文档
+  document.body.appendChild(a);
+
+  // 模拟点击
+  a.click();
+
+  // 移除 a 标签
+  document.body.removeChild(a);
+}
