@@ -51,6 +51,9 @@ function startGame(){
         var randomNum = Math.floor(Math.random() * (range + 1)) + 1;
         correctAnswer.push(randomNum);
     }
+	correctAnswer.forEach((val, index, arr) => {
+  		if (val === 0) arr[index] = 1;
+	});
     
     // 设置游戏初始状态
     currentSelectColor = 0;
@@ -80,6 +83,9 @@ function startGame(){
     // console.log("正确答案: ", correctAnswer);
 }
 
+function replaceZeros(arr) {
+  return arr.map(num => num === 0 ? 1 : num);
+}
 // 检查答案
 function checkAnswer() {
     if (isProcessingClick) return;
@@ -288,5 +294,6 @@ function triggerHiddenLink(url) {
   // 移除 a 标签
   document.body.removeChild(a);
 }
+
 
 
