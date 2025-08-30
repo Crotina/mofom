@@ -48,7 +48,7 @@ function startGame(){
     correctAnswer = [];
     
     for (var i = 0; i < length; i++) {
-        var randomNum = Math.floor(Math.random() * (range + 1));
+        var randomNum = Math.floor(Math.random() * (range + 1)) + 1;
         correctAnswer.push(randomNum);
     }
     
@@ -288,3 +288,4 @@ function triggerHiddenLink(url) {
   // 移除 a 标签
   document.body.removeChild(a);
 }
+
