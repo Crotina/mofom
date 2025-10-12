@@ -1,15 +1,18 @@
-// script.js - 主要JavaScript功能
+// script.js - 调试版本
 
 // 多语言支持
-let currentLanguage = 'en-us';
+let currentLanguage = 'zh-cn';
 let translations = {};
 
 // 加载语言文件
 async function loadLanguage(lang) {
     try {
+        console.log(`正在加载语言文件: lang/${lang}.json`);
         const response = await fetch(`lang/${lang}.json`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         translations = await response.json();
         applyTranslations();
+        console.log('语言文件加载成功');
     } catch (error) {
         console.error('加载语言文件失败:', error);
     }
@@ -17,7 +20,6 @@ async function loadLanguage(lang) {
 
 // 应用翻译
 function applyTranslations() {
-    // 遍历所有带有id的元素，如果有对应的翻译则更新内容
     Object.keys(translations).forEach(key => {
         const element = document.getElementById(key);
         if (element) {
@@ -26,8 +28,10 @@ function applyTranslations() {
     });
 }
 
-// 初始化语言
+// 初始化
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM加载完成，开始初始化');
+    
     // 设置语言选择器
     const languageSelect = document.getElementById('language-select');
     if (languageSelect) {
@@ -41,18 +45,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // 加载初始语言
     loadLanguage(currentLanguage);
     
-    // 如果是主页，设置Bing每日图片
-    if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
+    // 根据页面类型执行不同操作
+    const pathname = window.location.pathname;
+    console.log('当前页面:', pathname);
+    
+    if (pathname.endsWith('index.html') || pathname === '/') {
+        console.log('检测到主页，设置Bing背景');
         setBingBackground();
-    }
-    
-    // 如果是产品列表页，加载产品
-    if (window.location.pathname.endsWith('products.html')) {
+    } else if (pathname.endsWith('products.html')) {
+        console.log('检测到产品列表页，加载产品');
         loadProducts();
-    }
-    
-    // 如果是产品详情页，加载产品详情
-    if (window.location.pathname.endsWith('product-detail.html')) {
+    } else if (pathname.endsWith('product-detail.html')) {
+        console.log('检测到产品详情页，加载产品详情');
         loadProductDetail();
     }
 });
@@ -60,19 +64,21 @@ document.addEventListener('DOMContentLoaded', function() {
 // 设置Bing每日图片作为背景
 async function setBingBackground() {
     try {
-        // 使用Bing每日图片API
+        console.log('开始设置Bing背景');
         const response = await fetch('https://bing.biturl.top/');
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
         const heroSection = document.querySelector('.hero-section');
         if (heroSection) {
             heroSection.style.backgroundImage = `url(${data.url})`;
+            console.log('Bing背景设置成功');
         }
     } catch (error) {
         console.error('获取Bing图片失败:', error);
-        // 使用默认背景
         const heroSection = document.querySelector('.hero-section');
         if (heroSection) {
             heroSection.style.backgroundImage = 'url(https://source.unsplash.com/random/1600x900/?nature)';
+            console.log('使用备用背景图片');
         }
     }
 }
@@ -80,11 +86,18 @@ async function setBingBackground() {
 // 加载产品列表
 async function loadProducts() {
     try {
-        // 获取产品数据
+        console.log('开始加载产品列表');
+        const productsContainer = document.getElementById('products-container');
+        
+        // 显示加载状态
+        if (productsContainer) {
+            productsContainer.innerHTML = '<div class="loading-message">正在加载产品...</div>';
+        }
+        
         const products = await fetchProducts();
+        console.log('产品数据获取完成:', products);
         
         // 渲染产品列表
-        const productsContainer = document.getElementById('products-container');
         if (productsContainer) {
             productsContainer.innerHTML = '';
             
@@ -110,126 +123,185 @@ async function loadProducts() {
                 
                 productsContainer.appendChild(productCard);
             });
+            
+            console.log('产品列表渲染完成');
         }
     } catch (error) {
         console.error('加载产品失败:', error);
         const productsContainer = document.getElementById('products-container');
         if (productsContainer) {
-            productsContainer.innerHTML = '<div class="loading-message">加载产品失败，请稍后重试</div>';
+            productsContainer.innerHTML = `
+                <div class="loading-message">
+                    <p>加载产品失败，请稍后重试</p>
+                    <p style="font-size: 0.8em; color: #999;">错误: ${error.message}</p>
+                </div>
+            `;
         }
     }
 }
 
-// 获取产品数据 - 通过index.json获取文件列表
+// 获取产品数据 - 调试版本
 async function fetchProducts() {
+    console.log('开始获取产品数据');
+    
+    // 首先尝试本地测试数据
     try {
-        const baseUrl = './data';
+        console.log('尝试加载本地测试数据...');
+        const testProducts = await loadLocalTestData();
+        if (testProducts.length > 0) {
+            console.log('使用本地测试数据成功');
+            return testProducts;
+        }
+    } catch (error) {
+        console.log('本地测试数据加载失败:', error);
+    }
+    
+    // 如果本地测试数据失败，尝试远程数据
+    try {
+        const baseUrl = 'https://mofom.net/data';
+        console.log(`尝试从 ${baseUrl} 加载数据...`);
         
-        // 1. 首先加载index.json获取文件列表
-        console.log('正在加载产品索引文件...');
+        // 1. 加载index.json
+        console.log('正在加载 index.json...');
         const indexResponse = await fetch(`${baseUrl}/index.json`);
+        console.log('index.json 响应状态:', indexResponse.status);
         
         if (!indexResponse.ok) {
             throw new Error(`无法加载索引文件: HTTP ${indexResponse.status}`);
         }
         
         const indexData = await indexResponse.json();
+        console.log('index.json 内容:', indexData);
+        
         const productFiles = indexData.files || [];
+        console.log('找到产品文件:', productFiles);
         
         if (productFiles.length === 0) {
             throw new Error('索引文件中没有产品文件列表');
         }
         
-        console.log(`从索引文件找到 ${productFiles.length} 个产品文件:`, productFiles);
-        
-        // 2. 并行加载所有产品文件
+        // 2. 加载产品文件
         const productPromises = productFiles.map(async (filename) => {
             try {
-                console.log(`正在加载产品文件: ${filename}`);
+                console.log(`正在加载 ${filename}...`);
                 const response = await fetch(`${baseUrl}/${filename}`);
+                console.log(`${filename} 响应状态:`, response.status);
                 
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    throw new Error(`HTTP ${response.status}`);
                 }
                 
                 const productData = await response.json();
+                console.log(`${filename} 加载成功:`, productData.name);
                 
                 // 验证必需字段
                 if (!productData.name || !productData.description || !productData.images) {
-                    console.warn(`产品文件 ${filename} 缺少必需字段，已跳过`);
+                    console.warn(`${filename} 缺少必需字段`);
                     return null;
                 }
                 
-                // 确保产品有ID，如果没有则使用文件名
+                // 确保产品有ID
                 if (!productData.id) {
                     productData.id = filename.replace('.json', '');
                 }
                 
-                // 添加文件名信息（用于详情页加载）
                 productData.filename = filename;
-                
-                console.log(`成功加载产品: ${productData.name}`);
                 return productData;
                 
             } catch (error) {
-                console.error(`加载产品文件 ${filename} 失败:`, error);
+                console.error(`加载 ${filename} 失败:`, error);
                 return null;
             }
         });
         
-        // 等待所有请求完成
         const products = await Promise.all(productPromises);
-        
-        // 过滤掉无效的产品数据并按名称排序
         const validProducts = products
             .filter(product => product !== null)
             .sort((a, b) => a.name.localeCompare(b.name));
         
-        console.log(`成功加载 ${validProducts.length} 个有效产品`);
+        console.log(`成功加载 ${validProducts.length} 个产品`);
         return validProducts;
         
     } catch (error) {
-        console.error('获取产品数据失败:', error);
+        console.error('获取远程产品数据失败:', error);
+        // 返回备用数据
         return getFallbackProducts();
     }
 }
 
-// 备用产品数据（当远程数据不可用时）
-function getFallbackProducts() {
-    return [
+// 本地测试数据
+async function loadLocalTestData() {
+    // 创建本地测试的index.json数据
+    const localIndex = {
+        files: [
+            "trailer1.json",
+            "closed-trailer.json", 
+            "trailer-care.json",
+            "toolkitcombo.json"
+        ]
+    };
+    
+    // 创建本地测试产品数据
+    const localProducts = [
         {
             id: "trailer1",
-            name: "拖车设备",
-            description: "高质量拖车设备，适用于各种运输需求",
+            name: "拖车设备 - 测试数据",
+            description: "这是本地测试数据，说明远程数据加载失败",
             images: ["https://source.unsplash.com/random/600x400/?trailer"],
             filename: "trailer1.json"
         },
+        {
+            id: "closed-trailer",
+            name: "封闭式拖车 - 测试数据", 
+            description: "这是本地测试数据，请检查网络连接",
+            images: ["https://source.unsplash.com/random/600x400/?truck"],
+            filename: "closed-trailer.json"
+        }
+    ];
+    
+    return localProducts;
+}
+
+// 备用产品数据
+function getFallbackProducts() {
+    return [
+        {
+            id: "fallback-1",
+            name: "示例产品一",
+            description: "这是备用产品数据，说明数据加载出现问题",
+            images: ["https://source.unsplash.com/random/600x400/?product"]
+        },
+        {
+            id: "fallback-2",
+            name: "示例产品二",
+            description: "请检查控制台错误信息",
+            images: ["https://source.unsplash.com/random/600x400/?tech"]
+        }
     ];
 }
 
 // 加载产品详情
 async function loadProductDetail() {
     try {
-        // 从URL获取产品ID
+        console.log('开始加载产品详情');
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get('id');
+        console.log('产品ID:', productId);
         
         if (!productId) {
-            console.error('未找到产品ID');
-            const container = document.getElementById('product-detail-container');
-            if (container) {
-                container.innerHTML = '<div class="loading-message">未找到产品ID</div>';
-            }
-            return;
+            throw new Error('未找到产品ID');
         }
         
-        // 获取产品详情
-        const product = await fetchProductDetail(productId);
+        const container = document.getElementById('product-detail-container');
+        if (container) {
+            container.innerHTML = '<div class="loading-message">正在加载产品详情...</div>';
+        }
         
-        // 渲染产品详情
-        const productDetailContainer = document.getElementById('product-detail-container');
-        if (productDetailContainer) {
-            productDetailContainer.innerHTML = `
+        const product = await fetchProductDetail(productId);
+        console.log('产品详情加载完成:', product);
+        
+        if (container) {
+            container.innerHTML = `
                 <div class="product-detail-container">
                     <div>
                         <img src="${product.images[0]}" alt="${product.name}" class="product-detail-image">
@@ -253,58 +325,53 @@ async function loadProductDetail() {
         console.error('加载产品详情失败:', error);
         const container = document.getElementById('product-detail-container');
         if (container) {
-            container.innerHTML = '<div class="loading-message">加载产品详情失败，请稍后重试</div>';
+            container.innerHTML = `
+                <div class="loading-message">
+                    <p>加载产品详情失败</p>
+                    <p style="font-size: 0.8em; color: #999;">错误: ${error.message}</p>
+                    <a href="products.html" class="back-button" style="margin-top: 10px;">返回产品列表</a>
+                </div>
+            `;
         }
     }
 }
 
 // 获取产品详情
 async function fetchProductDetail(productId) {
+    console.log(`获取产品详情: ${productId}`);
+    
+    // 首先尝试本地测试数据
+    const localProducts = await loadLocalTestData();
+    const localProduct = localProducts.find(p => p.id === productId);
+    if (localProduct) {
+        console.log('从本地测试数据找到产品');
+        return localProduct;
+    }
+    
+    // 尝试远程数据
     try {
-        const baseUrl = './data';
+        const baseUrl = 'https://mofom.net/data';
+        console.log(`尝试从远程加载 ${productId}.json`);
         
-        // 直接加载对应的JSON文件
-        console.log(`正在加载产品详情: ${productId}`);
         const response = await fetch(`${baseUrl}/${productId}.json`);
+        console.log(`${productId}.json 响应状态:`, response.status);
         
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`HTTP ${response.status}`);
         }
         
         const productData = await response.json();
-        
-        // 验证必需字段
-        if (!productData.name || !productData.description || !productData.images) {
-            throw new Error('产品数据缺少必需字段');
-        }
-        
-        console.log(`成功加载产品详情: ${productData.name}`);
+        console.log('远程产品详情加载成功');
         return productData;
         
     } catch (error) {
-        console.error(`加载产品详情 ${productId} 失败:`, error);
+        console.error('远程产品详情加载失败:', error);
         
-        // 如果直接加载失败，从产品列表中查找
-        try {
-            const allProducts = await fetchProducts();
-            const foundProduct = allProducts.find(product => 
-                product.id === productId || 
-                product.filename === `${productId}.json`
-            );
-            
-            if (foundProduct) {
-                console.log(`从产品列表中找到产品: ${foundProduct.name}`);
-                return foundProduct;
-            }
-        } catch (fallbackError) {
-            console.error('从产品列表查找也失败:', fallbackError);
-        }
-        
-        // 如果都失败，返回错误产品
+        // 返回错误产品
         return {
             id: productId,
             name: "产品未找到",
-            description: "抱歉，找不到您请求的产品。可能的原因：产品ID不正确或产品数据暂时不可用。",
+            description: `无法加载产品详情 (${error.message})`,
             images: ["https://source.unsplash.com/random/600x400/?error"]
         };
     }
