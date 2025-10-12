@@ -3,109 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MOFOM, a nice trailer manufacturers</title>
-    <link rel="stylesheet" href="style.css">
+    <title>MOFOM - Home</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <!-- 导航栏 -->
     <nav class="navbar">
         <div class="nav-container">
-            <div class="logo">
-                <a href="#">MOFOM</a>
+            <div class="nav-logo">
+                <a href="index.html">MOFOM INC</a>
             </div>
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="#" class="nav-link active">首页</a>
-                </li>
-                <li class="nav-item">
-                    <a href="temp.html" class="nav-link">关于</a>
-                </li>
-                <li class="nav-item">
-                    <a href="test-page/index.html" class="nav-link">服务</a>
-                </li>
-                <li class="nav-item">
-                    <a href="temp.html" class="nav-link">联系</a>
-                </li>
-            </ul>
-            <div class="hamburger">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="products.html" class="nav-link">Products</a>
+                <div class="language-selector">
+                    <select id="language-select">
+                        <!-- <option value="0">we suggest you using web translator if you dont know English</option> -->
+                        <option value="en-us">English</option>
+						<option value="spanish">spanish</option>
+						<option value="kk">Kazakhstan</option>
+                    </select>
+                </div>
             </div>
         </div>
     </nav>
 
-    <!-- 英雄区域 -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>MOFOM WEBSITE DESCRIPTION</h1>
-            <p>网页正在开发中</p>
-            <button class="cta-button" ondblclick="spc()">了解更多</button>
-        </div>
-        <div class="hero-image">
-        </div>
-    </section>
-
-    <!-- 特点区域 -->
-    <section class="features">
-        <div class="container">
-            <h2>option cards</h2>
-            <div class="features-grid">
-				
-                <div class="feature-card">
-                    <div class="feature-icon">🚀</div>
-                    <h3>CARD A</h3>
-                    <p>discription</p>
-                </div>
-				
-                <div class="feature-card">
-                    <div class="feature-icon">💡</div>
-                    <h3>CARD b</h3>
-                    <p>ds</p>
-                </div>
-				
-                <div class="feature-card">
-                    <div class="feature-icon">🛡️</div>
-                    <h3>CARD c</h3>
-                    <p>确保业务安全运行</p>
-                </div>
-
-				
+    <!-- 主页内容 -->
+    <main class="main-content">
+        <section class="hero-section">
+            <div class="hero-content glass-effect">
+                <h1 id="hero-title">Welcome to mofom.net!</h1>
+                <p id="hero-description">we produces the best trailer for your car!</p>
+                <a href="products.html" class="cta-button" id="cta-button">查看产品</a>
             </div>
-        </div>
-    </section>
+        </section>
+        
+        <section class="features-section">
+            <div class="container">
+                <h2 id="features-title">我们的优势</h2>
+                <div class="features-grid">
+                    <div class="feature-card glass-effect">
+                        <h3 id="feature1-title">创新设计</h3>
+                        <p id="feature1-desc">采用最新技术，打造卓越产品体验</p>
+                    </div>
+                    <div class="feature-card glass-effect">
+                        <h3 id="feature2-title">品质保证</h3>
+                        <p id="feature2-desc">严格的质量控制，确保每一件产品</p>
+                    </div>
+                    <div class="feature-card glass-effect">
+                        <h3 id="feature3-title">客户服务</h3>
+                        <p id="feature3-desc">全天候客户支持，解决您的疑问</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <!-- 页脚 -->
     <footer class="footer">
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>MOFOM</h3>
-                    <p>致力于为客户提供卓越的科技解决方案</p>
-                </div>
-                <!-- <div class="footer-section">
-                    <h4>联系我们</h4>
-                    <p>电话: (123) 456-7890</p>
-                    <p>邮箱: info@innovationtech.com</p>
-                    <p>地址: 北京市海淀区科技园区88号</p>
-                </div> -->
-                <!-- <div class="footer-section">
-                    <h4>关注我们</h4>
-                    <div class="social-links">
-                        <a href="#">微信</a>
-                        <a href="#">微博</a>
-                        <a href="#">领英</a>
-                    </div>
-                </div> -->
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2023 MOFOM. 保留所有权利.</p>
-            </div>
+            <p id="footer-text">&copy; 2023 公司名称. 保留所有权利.</p>
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="scriptmfm.js"></script>
 </body>
 </html>
-
-
