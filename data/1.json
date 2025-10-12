@@ -1,0 +1,9 @@
+{
+    "id": 1,
+    "name": "产品一",
+    "description": "这是产品一的详细描述，包含产品的所有特性和优势。",
+    "images": [
+        "https://mofom.net/images/1/001.jpeg",
+        "https://mofom.net/images/1/002.jpeg"
+    ]
+}
