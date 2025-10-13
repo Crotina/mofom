@@ -114,7 +114,6 @@ body {
 .hero-content p {
     font-size: 1.1rem;
     margin-bottom: 2rem;
-    color: #64748b;
 	text-shadow: 0 10px 20px rgb(255, 255, 255);
 }
 
@@ -276,3 +275,4 @@ body {
 	display: none !important;
 
 }
+
