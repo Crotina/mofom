@@ -1,9 +1,0 @@
-{
-    "id": "example",
-    "name": "产品一",
-    "description": "这是产品一的详细描述，包含产品的所有特性和优势。",
-    "images": [
-        "https://source.unsplash.com/random/800x600/?product1",
-        "https://source.unsplash.com/random/800x600/?product1a"
-    ]
-}
