@@ -98,6 +98,10 @@ body {
 .hero-content {
     flex: 1;
     max-width: 500px;
+	background-color: #f8fafc50;
+	backdrop-filter: blur(2.5px);
+	padding: 5px 10px;
+	border-radius: 20px;
 }
 
 .hero-content h1 {
@@ -270,4 +274,5 @@ body {
 }
 .hide {
 	display: none !important;
+
 }
