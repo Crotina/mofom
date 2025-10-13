@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Product</title>
+	<link rel="stylesheet" href="../style.css" />
+	<link rel="stylesheet" href="productList.css" />
+</head>
+<body>
+	<nav class="navbar">
+	    <div class="nav-container">
+	        <div class="logo">
+	            <a href="#">MOFOM INC</a>
+	        </div>
+	        <ul class="nav-menu">
+	            <li class="nav-item">
+	                <a href="../index.html" class="nav-link">Home</a>
+	            </li>
+	            <li class="nav-item">
+	                <a href="#" class="nav-link active">Product</a>
+	            </li>
+	            <li class="nav-item">
+	                <a href="https://github.com/Crotina/mofom/issues/new" class="nav-link">Help</a>
+	            </li>
+	            <!-- <li class="nav-item">
+	                <a href="temp.html" class="nav-link"></a>
+	            </li> -->
+	        </ul>
+	        <div class="hamburger">
+	            <span class="bar"></span>
+	            <span class="bar"></span>
+	            <span class="bar"></span>
+	        </div>
+	    </div>
+	</nav>
+	
+	<h1 style="margin-left: 20px;">What do you want?</h1>
+	<!-- product list -->
+	<!-- 修改后的list-item结构 -->
+	<div id="list-container">
+		
+		<div class="list-item">
+		  <div class="discount-badge hidden">-20%</div>
+		  <div class="image-count-badge">+3</div>
+		  <img src="https://mofom.net/images/1/001.jpeg" alt="" />
+		  <div class="list-item-description">
+		    <h1>trailer for home</h1>
+		    <p>温馨家居拖车，为您提供舒适便捷的移动生活空间</p>
+		  </div>
+		</div>
+		
+		<div class="list-item">
+		  <div class="discount-badge">35% OFF 11/11 ~ 11/18!</div>
+		  <div class="image-count-badge">+5</div>
+		  <img src="https://mofom.net/images/2/001.jpeg" alt="" />
+		  <div class="list-item-description">
+		    <h1>trailer for journey</h1>
+		    <p>专为旅行设计的拖车，让您的旅途更加轻松自在</p>
+		  </div>
+		</div>
+		
+		<div class="list-item">
+		  <div class="discount-badge">-15%</div>
+		  <div class="image-count-badge">+5</div>
+		  <img src="https://mofom.net/images/2/001.jpeg" alt="" />
+		  <div class="list-item-description">
+		    <h1>trailer for journey</h1>
+		    <p>专为旅行设计的拖车，让您的旅途更加轻松自在</p>
+		  </div>
+		</div>
+		
+		<div class="list-item">
+		  <div class="discount-badge">-15%</div>
+		  <div class="image-count-badge">+5</div>
+		  <img src="https://mofom.net/images/2/001.jpeg" alt="" />
+		  <div class="list-item-description">
+		    <h1>trailer for journey</h1>
+		    <p>专为旅行设计的拖车，让您的旅途更加轻松自在</p>
+		  </div>
+		</div>
+		
+		<div class="list-item">
+		  <div class="discount-badge">-15%</div>
+		  <div class="image-count-badge">+5</div>
+		  <img src="https://mofom.net/images/2/001.jpeg" alt="" />
+		  <div class="list-item-description">
+		    <h1>trailer for journey</h1>
+		    <p>专为旅行设计的拖车，让您的旅途更加轻松自在</p>
+		  </div>
+		</div>
+	</div>
+
+
+	<script src="../script.js"></script>
+	<script>
+		async function loadSequentialData() {
+		    const baseUrl = './data';
+		    const result = [];
+		
+		    try {
+		        // 第一步：加载 main.json 获取文件列表
+		        const mainResponse = await fetch(`${baseUrl}/main.json`);
+		        if (!mainResponse.ok) {
+		            throw new Error(`无法加载 main.json: HTTP ${mainResponse.status}`);
+		        }
+		
+		        const mainData = await mainResponse.json();
+		        const fileList = mainData.files || [];
+		
+		        if (fileList.length === 0) {
+		            throw new Error('main.json 中没有文件列表');
+		        }
+		
+		        console.log(`main.json 中列出 ${fileList.length} 个文件:`, fileList);
+		
+		        // 第二步：使用 for 循环逐个加载文件
+		        for (const filename of fileList) {
+		            try {
+		                console.log(`正在加载文件: ${filename}`);
+		                const response = await fetch(`${baseUrl}/${filename}`);
+		                if (!response.ok) {
+		                    throw new Error(`加载失败: ${filename}, HTTP ${response.status}`);
+		                }
+		
+		                const data = await response.json();
+		                result.push(data);
+		                console.log(`成功加载: ${filename}`);
+		            } catch (fileError) {
+		                console.warn(`跳过文件 ${filename}，原因:`, fileError);
+		            }
+		        }
+		
+		        console.log(`共加载成功 ${result.length} 个文件`);
+		        return result;
+		
+		    } catch (error) {
+		        console.error('加载数据失败:', error);
+		        return [];
+		    }
+		}
+	</script>
+</body>
+</html>
