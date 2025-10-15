@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title id="pageTitle">detail</title>
+    <link rel="stylesheet" href="https://mofom.net/style.css" />
+    <style>
+		#detailContainer {
+		  display: flex;
+		  flex-direction: column;
+		  max-width: 650px;
+		  margin: 40px auto;
+		  padding: 20px;
+		  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+		  background-color: #fff;
+		  border-radius: 8px;
+		  font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+		  color: #333;
+		}
+		#title {
+		  font-size: 1.8rem;
+		  margin-bottom: 10px;
+		  /* text-align: center; */
+		  color: #222;
+		}
+		
+		#discount.highlight {
+		  font-size: 1.4rem;
+		  color: #e63946;
+		  /* text-align: center; */
+		  margin: 10px 0;
+		}
+		
+		#description {
+		  font-size: 1rem;
+		  line-height: 1.6;
+		  padding: 0 10px;
+		  text-align: justify;
+		}
+
+		    .gallery {
+		      max-width: 450px;
+			  height: auto;
+		      margin: auto;
+		    }
+		    .main-image {
+		      width: 100%;
+		      height: auto;
+		      object-fit: cover;
+		      border: 2px solid #444;
+		      margin-bottom: 15px;
+		    }
+		    .thumbnails {
+		      display: flex;
+		      gap: 10px;
+		      overflow-x: auto;
+		    }
+		    .thumbnails img {
+		      width: 120px;
+		      height: 80px;
+		      object-fit: cover;
+		      cursor: pointer;
+		      border: 2px solid transparent;
+		      transition: border 0.3s;
+		    }
+		    .thumbnails img:hover {
+		      border: 2px solid #00aaff;
+		    }
+
+	</style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="#">MOFOM INC</a>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="../index.html" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link active">Product</a>
+                </li>
+                <li class="nav-item">
+                    <a href="../help.html" class="nav-link">Help</a>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+    <div id="detailConatiner">
+		<div id="detailContainer">
+		  <h1 id="title">商品标题</h1>
+		
+		  <div class="gallery">
+		    <img id="mainImage" class="main-image" src="" alt="主图">
+		    <div class="thumbnails" id="imageList"></div>
+		  </div>
+		
+		  <h2 id="discount" class="highlight">限时优惠</h2>
+		  <p id="description">商品描述内容</p>
+		</div>
+
+    </div>
+    <script src="../script.js"></script>
+    <script>
+		console.log("hello");
+		
+		const isDevmode = 0;
+		const urlParams = new URLSearchParams(window.location.search);
+		let itemId = parseInt(urlParams.get('id'), 10);
+		
+		console.log('接收到的 ID:', itemId);
+		if (isDevmode) {
+		    itemId = 1;
+		}
+		
+		async function loadData(itemId) {
+		    const baseUrl = './productData';
+		    let fileList = [];
+			
+			if(itemId == NaN) {
+				console.warn("itemId没有设置！")
+				return null;
+			}
+		
+		    try {
+		        // 1. 加载 main.json 获取文件列表
+		        const mainResponse = await fetch(`${baseUrl}/main.json`);
+		        if (!mainResponse.ok) {
+		            throw new Error(`无法加载 main.json: HTTP ${mainResponse.status}`);
+		        }
+		
+		        const mainData = await mainResponse.json();
+		        fileList = mainData.files || [];
+		
+		        if (fileList.length === 0) {
+		            throw new Error('main.json 中没有文件列表');
+		        }
+		
+		        // 2. 根据 itemId 获取对应文件名
+		        if (itemId < 0 || itemId >= fileList.length) {
+		            throw new Error(`itemId 超出范围: ${itemId}`);
+		        }
+		
+		        const targetFile = fileList[itemId];
+		        console.log(`将加载文件: ${targetFile}`);
+		
+		        // 3. 加载对应的 JSON 文件
+		        const fileResponse = await fetch(`${baseUrl}/${targetFile}`);
+		        if (!fileResponse.ok) {
+		            throw new Error(`无法加载 ${targetFile}: HTTP ${fileResponse.status}`);
+		        }
+		
+		        const fileData = await fileResponse.json();
+		
+		        // 4. 返回文件内容
+		        return fileData;
+		
+		    } catch (error) {
+		        console.error('加载数据失败:', error);
+		        return null;
+		    }
+		}
+		async function renderData() {
+			const content = await loadData(itemId);
+			const imageList = document.getElementById("imageList");
+			
+			const title = document.getElementById("title");
+			const pageTitle = document.getElementById("pageTitle");
+			const description = document.getElementById("description");
+			const discountInfo = document.getElementById("discount");
+			
+			// 加载图片
+			var images = "";
+			for(let i = 0; i < content.imagesUrl.length; i++) {
+				images += `
+					<img src="${content.imagesUrl[i]}" onclick="changeImage(this.src)">
+				`;
+			}
+			document.getElementById('mainImage').src = content.imagesUrl[0];
+			console.log(images);
+			imageList.innerHTML = images;
+			
+			//加载其他文字内容
+			title.textContent = content.title;
+			pageTitle.textContent = content.title;
+			description.textContent = content.description;
+			discountInfo.style.display = (content.discount.isDiscount === 0 ? "none" : "");
+			discountInfo.textContent = `${content.discount.rate}% Off Until ${content.discount.until}`;
+		}
+		function changeImage(src) {
+		    document.getElementById('mainImage').src = src;
+		}
+
+		document.addEventListener("DOMContentLoaded", renderData())
+	</script>
+</body>
+</html>

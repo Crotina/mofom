@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Product</title>
-	<link rel="stylesheet" href="../style.css" />
+	<link rel="stylesheet" href="https://mofom.net/style.css" />
 	<link rel="stylesheet" href="productList.css" />
 </head>
 <body>
@@ -94,8 +94,21 @@
 
 	<script src="../script.js"></script>
 	<script>
+		function goToDetailPage(itemId) {
+		    if (typeof itemId !== 'number') {
+		        console.error('参数必须是整数');
+		        return;
+		    }
+		
+		    // 构造跳转 URL，传递参数 itemId
+		    const targetUrl = `detail.html?id=${itemId}`;
+		
+		    // 执行跳转
+		    window.location.href = targetUrl;
+		}
+		// 按顺序加载 ./main.json 中列出的文件，并返回对象数组
 		async function loadSequentialData() {
-		    const baseUrl = './data';
+		    const baseUrl = './productData';
 		    const result = [];
 		
 		    try {
@@ -131,7 +144,8 @@
 		            }
 		        }
 		
-		        console.log(`共加载成功 ${result.length} 个文件`);
+		        // 第三步：返回加载好的对象数组
+		        console.log(`共加载成功 ${result.length} 个文件, 类型${typeof result}`);
 		        return result;
 		
 		    } catch (error) {
@@ -139,7 +153,38 @@
 		        return [];
 		    }
 		}
+		async function render_data_to_screen() {
+		    const productlist = document.getElementById("list-container");
+		    const result = await loadSequentialData();
+		
+		    // document.getElementById("result").textContent = JSON.stringify(result, null, 2);
+		    console.log(result);
+		
+		    let content = "";
+		    for (let i = 0; i < result.length; i++) {
+		        let title = result[i].title;
+		        let description = result[i].description;
+		        let displayImageUrl = result[i].imagesUrl[0];
+		        let imagesRemain = result[i].imagesUrl.length - 1;
+		        let isDiscount = result[i].discount.isDiscount;
+		        let discountRate = result[i].discount.rate;
+		        let discountUntil = result[i].discount.until;
+		
+		        content += `
+		            <div class="list-item"  onclick="goToDetailPage(${i})">
+		              <div class="discount-badge ${(isDiscount == 0 ? "hidden" : "")}">${discountRate}% Off until ${discountUntil}</div>
+		              <div class="image-count-badge ${(imagesRemain === 0 ? "hidden" : "")}">+${imagesRemain}</div>
+		              <img src="${displayImageUrl}" alt="" />
+		              <div class="list-item-description">
+		                <h1>${title}</h1>
+		                <p>${description}</p>
+		              </div>
+		            </div>
+		        `;
+		    }
+		    productlist.innerHTML = content;
+		}
+		document.addEventListener("DOMContentLoaded", render_data_to_screen());
 	</script>
 </body>
-
 </html>

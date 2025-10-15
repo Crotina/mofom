@@ -8,8 +8,12 @@
     padding: 20px;
     justify-items: center;
 }
+#list-container:empty::after {
+	content: "出错了！";
+}
 
 .list-item {
+	cursor: pointer;
   position: relative;
   border-radius: 4px;
   overflow: hidden;
@@ -25,7 +29,7 @@
 
 .list-item img {
   width: 100%;
-  
+  cursor: pointer;
   height: 200px;
   object-fit: cover;
   display: block;
@@ -74,8 +78,15 @@
   border-radius: 2px;
   font-size: 0.8em;
   font-weight: 600;
+  /* opacity: 0; */
+  /* transform: translateY(-10px); */
   transition: all 0.3s ease;
 }
+
+/* .list-item:hover .discount-badge {
+  opacity: 1;
+  transform: translateY(0);
+} */
 
 /* 隐藏折扣的类 */
 .hidden {
@@ -89,6 +100,4 @@
 	    flex-direction: column;
 	    align-items: center;
 	}
-
 }
-
