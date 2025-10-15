@@ -74,18 +74,12 @@
   border-radius: 2px;
   font-size: 0.8em;
   font-weight: 600;
-  opacity: 0;
   transform: translateY(-10px);
   transition: all 0.3s ease;
 }
 
-.list-item:hover .discount-badge {
-  opacity: 1;
-  transform: translateY(0);
-}
-
 /* 隐藏折扣的类 */
-.discount-badge.hidden {
+.hidden {
   display: none;
 }
 @media screen and (max-width: 514px) {
@@ -96,4 +90,5 @@
 	    flex-direction: column;
 	    align-items: center;
 	}
+
 }
