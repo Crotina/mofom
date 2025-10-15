@@ -1,0 +1,12 @@
+{
+	"title":"closed trailer",
+	"description":"we have closed trailer, to take more care about your stuff in the trailer!",
+	"imagesUrl":[
+		"https://mofom.net/images/2/001.jpeg"
+	],
+	"discount":{
+		"isDiscount":1,
+		"rate":35,
+		"until":"30OCT"
+	}
+}
