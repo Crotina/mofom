@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">detail</title>
+    <title>detail</title>
     <link rel="stylesheet" href="https://mofom.net/style.css" />
     <style>
 		#detailContainer {
@@ -276,7 +276,6 @@
 			const imageList = document.getElementById("imageList");
 			
 			const title = document.getElementById("title");
-			const pageTitle = document.getElementById("pageTitle");
 			const description = document.getElementById("description");
 			const discountInfo = document.getElementById("discount");
 			
@@ -293,7 +292,7 @@
 			
 			//加载其他文字内容
 			title.textContent = content.title;
-			pageTitle.textContent = content.title;
+			document.title = content.title;
 			description.textContent = content.description;
 			discountInfo.style.display = (content.discount.isDiscount === 0 ? "none" : "");
 			discountInfo.textContent = `${content.discount.rate}% Off Until ${content.discount.until}`;
