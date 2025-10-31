@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://mofom.net/style.css" />
+  <link rel="shortcut icon" href="https://mofom.net/images/mofomvideo/mfmvideo-ico.ico" type="image/x-icon" />
+  <title>KawaiiTech Product</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #000;
+      overflow: hidden;
+      font-family: sans-serif;
+    }
+    #manu {
+      background-color: #414141;
+      width: 100%;
+      line-height: 35px;
+      position: fixed;
+      top: 0;
+      z-index: 10;
+    }
+    .simple-button {
+      background-color: transparent;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 20px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    #titleText {
+      color: #fff;
+      margin-right: 10px;
+      margin-bottom: 0px;
+    }
+    #titleFF {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    #titleFF p {
+      margin: 0px;
+      padding: 0px;
+      line-height: 1rem;
+      margin-bottom: 10px;
+      margin-right: 10px;
+      text-align: right;
+      color: #fff;
+      font-size: 12px;
+    }
+    #menu-list {
+      background: rgba(65,65,65,1);
+      width: 250px;
+      height: calc(100vh - 50px);
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      position: fixed;
+      left: 0;
+      top: 50px;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease-in-out;
+      overflow-y: auto;
+      overflow-x: hidden;
+      z-index: 9;
+      -webkit-overflow-scrolling: touch;
+    }
+    #menu-list li { 
+      padding-left: 20px; 
+      border-bottom: 1px solid white;
+      position: relative;
+    }
+    #menu-list a { color: white; text-decoration: none; cursor: pointer; display: block; padding: 10px 0; }
+    #menu-list select {
+      background: #414141;
+      color: white;
+      border: 1px solid white;
+      padding: 8px;
+      border-radius: 4px;
+      width: 90%;
+      font-size: 14px;
+      margin: 10px 0;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      position: static;
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    #menu-list select option {
+      background: #414141;
+      color: white;
+      padding: 10px;
+    }
+    #menu-list li {
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
+    }
+    #menu-list.active { transform: translateX(0); }
+    .topBar { display: flex; flex-direction: row; align-items: center; justify-content: space-between; }
+    #videoFeed {
+      height: calc(100vh - 50px);
+      width: 100%;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      margin-top: 50px;
+      position: relative;
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE and Edge */
+    }
+    #videoFeed::-webkit-scrollbar {
+      display: none; /* Chrome, Safari and Opera */
+    }
+    .video-item {
+      height: calc(100vh - 50px);
+      width: 100%;
+      scroll-snap-align: start;
+      position: relative;
+      background: #000;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    video {
+      max-width: 100%;
+      max-height: calc(100% - 40px);
+      width: auto;
+      height: auto;
+      object-fit: contain;
+    }
+    .video-controls {
+      width: 100%;
+      padding: 10px 20px;
+      box-sizing: border-box;
+      position: absolute;
+      bottom: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+    }
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 2px;
+      cursor: pointer;
+      position: relative;
+    }
+    .progress-filled {
+      height: 100%;
+      background: #fff;
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.1s;
+    }
+    .play-pause-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80px;
+      height: 80px;
+      background: rgba(0,0,0,0.6);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 40px;
+      color: white;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .play-pause-overlay.show {
+      opacity: 1;
+    }
+    #historyList { display:none; max-height:200px; overflow-y:auto; padding-left: 0; }
+    #historyList li { font-size: 12px; border-bottom: 1px dashed #aaa; list-style: none; }
+    
+    .loading-indicator {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-size: 14px;
+      opacity: 0.7;
+    }
+
+    @media screen and (orientation: landscape) {
+      video {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+      }
+    }
+	.readme .according-content p {
+		margin: 10px 1px;
+		line-height: 1.2rem;
+	}
+	.readme h3 {
+		margin: 0px;
+	}
+	.readme {
+		color: #fff;
+	}
+	.according {
+	    font-family: Arial, Helvetica, sans-serif;
+	    width: 450px;
+	
+	}
+	
+	.according-item {
+	    margin-bottom: 10px;
+	}
+	
+	.according-title {
+	    color: #fff;
+	    padding: 10px;
+	    cursor: pointer;
+	}
+	
+	
+	.according-content {
+	    /* background: #e6d6a4; */
+	    padding: 10px;
+	    display: none;
+	}
+	
+	.according-item.active .according-content {
+	    display: block;
+	}
+  </style>
+</head>
+<body>
+  <div id="manu">
+    <div class="topBar">
+      <button id="menu-toggle" class="simple-button">&#9776;</button>
+      <div id="titleFF">
+        <h1 id="titleText">KAWAIITECH VIDEO</h1>
+        <p id="categoryText">loading...</p>
+      </div>
+    </div>
+    <ul id="menu-list">
+      <li>
+        <label style="color: white;">category:</label>
+        <select id="apiOption"></select>
+      </li>
+      <li id="subTypeContainer" style="display: none;">
+        <label style="color: white;">选择子类:</label>
+        <select id="apiSubOption"></select>
+      </li>
+	  <li><a href="https://mofom.net">back to mofom.net</a></li>
+      <li><a id="prevBtn" class="hide">上一条视频(开发者功能)</a></li>
+      <li><a id="nextBtn" class="hide">下一条视频(开发者功能)</a></li>
+      <li><a id="historyBtn">浏览历史</a></li>
+      <ul id="historyList"></ul>
+	  <li class="readme">
+		  <div class="according-item">
+		      <div class="according-title">
+		          注意事项 | README
+		      </div>
+		      <div class="according-content">
+		          <p>this is an early access version, may including error <br /> 此为测试版，可能包含错误。</p>
+		          <p>如果持续遇到任何程序BUG，请<a href="https://mofom.net/help">(点击此处寻求帮助)</a></p>
+				  <p>All video content is sourced exclusively from <a href="https://hefollo.com">(https://hefollo.com)</a>. MOFOM Inc, CA bears no legal or operational responsibility for any disputes arising from said content. In cases involving copyright infringement or other concerns, please contact the operator of hefollo.com via the designated email address: hefollos@gmail.com.</p>
+				  <hr width="90%" color="#fff"/>
+		          <p>Copyright&copy; 2025 MOFOM Inc, CA. all rights reserved</p>
+		      </div>
+		  </div>
+	  </li>
+    </ul>
+  </div>
+
+  <div id="videoFeed"></div>
+	<script>
+	    const accodingItems = document.querySelectorAll(".according-item");
+	    accodingItems.forEach(item => {
+	        const title = item.querySelector(".according-title");
+	        const content = item.querySelector(".according-content");
+	
+	        title.addEventListener('click', () => {
+	            for (var i = 0; i < accodingItems.length; i++) {
+	                if (accodingItems[i] != item) {
+	                    accodingItems[i].classList.remove('active');
+	                } else {
+	                    item.classList.toggle('active');
+	                }
+	            }
+	
+	        });
+	    });
+	</script>
+  <script>
+    const VIDEO_API = "https://hefollo.com/apis.php?type=";
+    const VIDEO_TYPES = [
+		{
+        name: "recommended",
+        key: "优质小姐姐视频"
+		},
+		{
+        name: "standard type",
+        key: "小姐姐视频",
+        subTypeArray: [
+			{
+			  name: "lolicon",
+			  key: "极品萝莉分区",
+			},
+			{
+				name: "kawaii",
+				key: "卡哇伊分区"
+			},
+			{
+				name: "sister",
+				key: "学姐分区"
+			},
+			{
+				name: "subtype 2",
+				key: "2分区",
+			},
+			{
+				name: "subtype 3",
+				key: "3分区",
+			},
+			{
+				name: "subtype 19",
+				key: "19分区",
+			},
+			{
+				name: "cosplay",
+				key: "COS分区",
+			}
+			]
+		},
+		{
+			name: "竖屏",
+			key: "小姐姐竖屏视频"
+		},
+		{
+			name: "横屏",
+			key: "小姐姐横屏视频"
+		},
+		{
+			name: "Douyin_",
+			key: "抖音小姐姐视频",
+			subTypeArray: [
+				{
+					name: "林晚晚",
+					key: "林晚晚"
+				},
+				{
+					name: "嘉嘉酱",
+					key: "嘉嘉酱",
+				},
+			]
+		}
+    ];
+    
+    let currentVideoType = VIDEO_TYPES[0];
+    let currentSubTypeIndex = 0;
+    
+    function getActiveVideoApiRequestUrl() {
+      let url = VIDEO_API + currentVideoType.key;
+      if (currentVideoType.subTypeArray && currentVideoType.subTypeArray.length > 0) {
+        url += "/" + currentVideoType.subTypeArray[currentSubTypeIndex].key;
+      }
+      return url;
+    }
+    
+    function getCurrentSubTypeName() {
+      if (currentVideoType.subTypeArray && currentVideoType.subTypeArray.length > 0) {
+        return currentVideoType.subTypeArray[currentSubTypeIndex].name;
+      }
+      return null;
+    }
+    
+    const selectElement = document.getElementById("apiOption");
+
+    const feed = document.getElementById('videoFeed');
+    const menuToggle = document.querySelector('#menu-toggle');
+    const menuList = document.querySelector('#menu-list');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const historyBtn = document.getElementById('historyBtn');
+    const historyList = document.getElementById('historyList');
+    const apiOption = document.getElementById('apiOption');
+    const apiSubOption = document.getElementById('apiSubOption');
+    const subTypeContainer = document.getElementById('subTypeContainer');
+    const categoryText = document.getElementById('categoryText');
+    
+    // 更新类别显示文本
+    function updateCategoryText() {
+      let text = currentVideoType.name;
+      const subTypeName = getCurrentSubTypeName();
+      if (subTypeName) {
+        text += ' / ' + subTypeName;
+      }
+      categoryText.textContent = text;
+    }
+    
+    // 初始化主类型选择器
+    VIDEO_TYPES.forEach((type, index) => {
+      const option = document.createElement('option');
+      option.value = index;
+      option.text = type.name;
+      apiOption.appendChild(option);
+    });
+    
+    // 更新子类型选择器
+    function updateSubTypeSelect() {
+      apiSubOption.innerHTML = '';
+      
+      if (currentVideoType.subTypeArray && currentVideoType.subTypeArray.length > 0) {
+        subTypeContainer.style.display = 'block';
+        currentVideoType.subTypeArray.forEach((subType, index) => {
+          const option = document.createElement('option');
+          option.value = index;
+          option.text = subType.name;
+          apiSubOption.appendChild(option);
+        });
+        // 重置子类型索引为0
+        currentSubTypeIndex = 0;
+        apiSubOption.value = '0';
+      } else {
+        subTypeContainer.style.display = 'none';
+        currentSubTypeIndex = 0;
+      }
+      
+      updateCategoryText();
+    }
+    
+    // 初始化子类型
+    updateSubTypeSelect();
+    
+    // 主类型改变事件
+    apiOption.addEventListener('change', async function() {
+      const selectedIndex = parseInt(this.value);
+      currentVideoType = VIDEO_TYPES[selectedIndex];
+      updateSubTypeSelect();
+      
+      // 重新初始化视频
+      historyUrls = [];
+      currentIndex = 0;
+      loadingUrls.clear();
+      feed.innerHTML = '';
+      videoEls = [];
+      
+      await init();
+      menuList.classList.remove('active');
+    });
+    
+    // 子类型改变事件
+    apiSubOption.addEventListener('change', async function() {
+      currentSubTypeIndex = parseInt(this.value);
+      updateCategoryText();
+      
+      // 重新初始化视频
+      historyUrls = [];
+      currentIndex = 0;
+      loadingUrls.clear();
+      feed.innerHTML = '';
+      videoEls = [];
+      
+      await init();
+      menuList.classList.remove('active');
+    });
+    
+    // 配置：预加载视频数量
+    const PRELOAD_AHEAD = 3;  // 向前预加载3个视频
+    const PRELOAD_BEHIND = 2; // 向后预加载2个视频
+    const BUFFER_SIZE = PRELOAD_AHEAD + PRELOAD_BEHIND + 1; // 总共6个视频在DOM中
+    
+    menuToggle.addEventListener('click', () => {
+      menuList.classList.toggle('active');
+    });
+    
+    let currentIndex = 0;
+    let historyUrls = [];
+    let videoEls = [];
+    let loadingUrls = new Set(); // 追踪正在加载的URL
+    
+    function createVideoElement() {
+      const container = document.createElement('div');
+      container.className = 'video-item';
+      const video = document.createElement('video');
+      video.loop = true;
+      video.muted = false;
+      video.playsInline = true;
+      video.controls = false;
+      video.preload = 'auto'; // 启用自动预加载
+      video.addEventListener('click', () => {
+        if (video.paused) video.play(); else video.pause();
+      });
+      container.appendChild(video);
+      return { container, video };
+    }
+    
+    async function loadVideo(videoEl, index) {
+      if (index < 0) return;
+      
+      const apiUrl = getActiveVideoApiRequestUrl() + "&t=" + Math.floor(Math.random() * 1000000);
+      
+      // 如果该索引已有URL，直接使用
+      if (historyUrls[index]) {
+        if (videoEl.src !== historyUrls[index]) {
+          videoEl.src = historyUrls[index];
+        }
+      } else {
+        // 避免重复加载相同的URL
+        if (!loadingUrls.has(index)) {
+          loadingUrls.add(index);
+          videoEl.src = apiUrl;
+          historyUrls[index] = apiUrl;
+          updateHistory();
+          
+          // 视频开始加载后从集合中移除
+          videoEl.addEventListener('loadeddata', () => {
+            loadingUrls.delete(index);
+          }, { once: true });
+        }
+      }
+      
+      // 只播放当前视频
+      if (index === currentIndex) {
+        videoEl.play().catch(()=>{});
+      } else {
+        videoEl.pause();
+      }
+    }
+    
+    // 预加载周围的视频
+    async function preloadSurroundingVideos() {
+      const promises = [];
+      
+      // 向后预加载
+      for (let i = 1; i <= PRELOAD_AHEAD; i++) {
+        const idx = currentIndex + i;
+        if (idx < videoEls.length + currentIndex - PRELOAD_BEHIND) {
+          const videoIdx = (PRELOAD_BEHIND + i) % videoEls.length;
+          if (videoEls[videoIdx]) {
+            promises.push(loadVideo(videoEls[videoIdx].video, idx));
+          }
+        }
+      }
+      
+      // 向前预加载
+      for (let i = 1; i <= PRELOAD_BEHIND; i++) {
+        const idx = currentIndex - i;
+        if (idx >= 0) {
+          const videoIdx = (PRELOAD_BEHIND - i + videoEls.length) % videoEls.length;
+          if (videoEls[videoIdx]) {
+            promises.push(loadVideo(videoEls[videoIdx].video, idx));
+          }
+        }
+      }
+      
+      await Promise.all(promises);
+    }
+    
+    function updateHistory() {
+      historyList.innerHTML = '';
+      historyUrls.forEach((url, idx) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<a href="#">视频 ${idx+1}</a>`;
+        li.addEventListener('click', (e) => {
+          e.preventDefault();
+          jumpToVideo(idx);
+        });
+        historyList.appendChild(li);
+      });
+    }
+    
+    async function jumpToVideo(idx) {
+      currentIndex = idx;
+      
+      // 停止所有视频
+      videoEls.forEach(el => el.video.pause());
+      
+      // 重新布局视频元素
+      await rebuildVideoLayout();
+      
+      // 滚动到中间位置
+      feed.scrollTop = PRELOAD_BEHIND * feed.clientHeight;
+      
+      // 播放当前视频
+      videoEls[PRELOAD_BEHIND].video.play().catch(()=>{});
+      
+      // 关闭菜单
+      menuList.classList.remove('active');
+    }
+    
+    // 重建视频布局（用于跳转）
+    async function rebuildVideoLayout() {
+      feed.innerHTML = '';
+      const newVideoEls = [];
+      
+      for (let i = -PRELOAD_BEHIND; i <= PRELOAD_AHEAD; i++) {
+        const { container, video } = createVideoElement();
+        feed.appendChild(container);
+        newVideoEls.push({ container, video });
+        await loadVideo(video, currentIndex + i);
+      }
+      
+      videoEls = newVideoEls;
+    }
+    
+    historyBtn.addEventListener('click', () => {
+      historyList.style.display = historyList.style.display === 'none' ? 'block' : 'none';
+    });
+    
+    prevBtn.addEventListener('click', () => {
+      playPrev();
+      menuList.classList.remove('active');
+    });
+    
+    nextBtn.addEventListener('click', () => {
+      playNext();
+      menuList.classList.remove('active');
+    });
+    
+    async function playNext() {
+      currentIndex++;
+      
+      // 移除最前面的视频
+      const first = videoEls.shift();
+      feed.removeChild(first.container);
+      
+      // 在末尾添加新视频
+      const { container, video } = createVideoElement();
+      feed.appendChild(container);
+      videoEls.push({ container, video });
+      
+      // 加载新视频
+      await loadVideo(video, currentIndex + PRELOAD_AHEAD);
+      
+      // 控制播放
+      videoEls.forEach((el, idx) => {
+        if (idx === PRELOAD_BEHIND) {
+          el.video.play().catch(()=>{});
+        } else {
+          el.video.pause();
+        }
+      });
+      
+      // 滚动到中间
+      feed.scrollTop = PRELOAD_BEHIND * feed.clientHeight;
+    }
+    
+    async function playPrev() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        
+        // 移除最后面的视频
+        const last = videoEls.pop();
+        feed.removeChild(last.container);
+        
+        // 在开头添加新视频
+        const { container, video } = createVideoElement();
+        feed.insertBefore(container, feed.firstChild);
+        videoEls.unshift({ container, video });
+        
+        // 加载新视频
+        await loadVideo(video, currentIndex - PRELOAD_BEHIND);
+        
+        // 控制播放
+        videoEls.forEach((el, idx) => {
+          if (idx === PRELOAD_BEHIND) {
+            el.video.play().catch(()=>{});
+          } else {
+            el.video.pause();
+          }
+        });
+        
+        // 滚动到中间
+        feed.scrollTop = PRELOAD_BEHIND * feed.clientHeight;
+      }
+    }
+    
+    async function init() {
+      videoEls = [];
+      
+      // 创建缓冲区的所有视频元素
+      for (let i = -PRELOAD_BEHIND; i <= PRELOAD_AHEAD; i++) {
+        const { container, video } = createVideoElement();
+        feed.appendChild(container);
+        videoEls.push({ container, video });
+      }
+      
+      // 加载所有视频
+      const loadPromises = videoEls.map((el, idx) => {
+        const videoIndex = currentIndex + idx - PRELOAD_BEHIND;
+        return loadVideo(el.video, videoIndex);
+      });
+      
+      await Promise.all(loadPromises);
+      
+      // 滚动到中间位置
+      feed.scrollTop = PRELOAD_BEHIND * feed.clientHeight;
+      
+      // 播放当前视频
+      videoEls[PRELOAD_BEHIND].video.play().catch(()=>{});
+    }
+    
+    let isHandlingScroll = false;
+    let scrollTimeout;
+    
+    feed.addEventListener('scroll', async () => {
+      if (isHandlingScroll) return;
+      
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(async () => {
+        const h = feed.clientHeight;
+        const currentScrollTop = feed.scrollTop;
+        const scrollIndex = Math.round(currentScrollTop / h);
+        
+        // 向下滑动
+        if (scrollIndex === PRELOAD_BEHIND + 1) {
+          isHandlingScroll = true;
+          await playNext();
+          setTimeout(() => { isHandlingScroll = false; }, 100);
+        }
+        // 向上滑动
+        else if (scrollIndex === PRELOAD_BEHIND - 1 && currentIndex > 0) {
+          isHandlingScroll = true;
+          await playPrev();
+          setTimeout(() => { isHandlingScroll = false; }, 100);
+        }
+      }, 150);
+    });
+    
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        playNext();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        playPrev();
+      }
+    });
+    
+    // 初始化
+    init();
+  </script>
+</body>
+</html>
