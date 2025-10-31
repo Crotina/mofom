@@ -56,3 +56,17 @@ window.addEventListener('DOMContentLoaded', () => {
 function spc() {
 	alert("KAWAIITECH");
 }
+
+function redirectTo(url) {
+  if (typeof url === 'string' && url.startsWith('http')) {
+    const a = document.createElement('a');
+    a.href = url;
+    a.style.display = 'none';
+    a.target = '_blank';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a); // 清理 DOM
+  } else {
+    console.error('无效的 URL' + url);
+  }
+}
