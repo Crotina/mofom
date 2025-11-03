@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Random Image Viewer</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      height: 100%;
+      min-height: 100vh;
+      background: #f5f5f5;
+      overflow-x: hidden;
+      /* 防止任何滚动 */
+      overflow-y: hidden;
+    }
+    
+    /* 左侧控制面板 */
+    .sidebar {
+      width: 320px;
+      background: white;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+      /* 防止侧边栏滚动 */
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    
+    .sidebar h1 {
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 8px;
+    }
+    
+    .sidebar label {
+      font-size: 14px;
+      color: #666;
+      font-weight: 500;
+      margin-bottom: 8px;
+      display: block;
+    }
+    
+    /* 下拉选择器容器 */
+    .select-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      list-style: none;
+    }
+    
+    select {
+      width: 100%;
+      padding: 10px 35px 10px 12px;
+      font-size: 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      background-color: #fff;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.2s;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg fill='%23666' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 16px;
+    }
+    
+    select:hover {
+      border-color: #0078d4;
+    }
+    
+    select:focus {
+      border-color: #0078d4;
+      box-shadow: 0 0 0 3px rgba(0,120,212,0.1);
+      outline: none;
+    }
+    
+    /* 按钮样式 */
+    .btn {
+      padding: 12px 24px;
+      font-size: 15px;
+      font-weight: 500;
+      border: 2px solid #0078d4;
+      border-radius: 8px;
+      background: white;
+      color: #0078d4;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    
+    .btn:hover:not(:disabled) {
+      background: #0078d4;
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,120,212,0.3);
+    }
+    
+    .btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+    
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .btn-primary {
+      width: 100%;
+      /* margin-top: auto; */
+    }
+    
+    /* 右侧图片显示区域 */
+    .main-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      gap: 20px;
+      /* 确保主区域不产生滚动 */
+      min-height: 0;
+      overflow: hidden;
+    }
+    
+    .image-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      overflow: hidden;
+      position: relative;
+      /* 关键：限制容器高度，确保内容适应 */
+      min-height: 0;
+      max-height: 100%;
+    }
+    
+    #mainImage {
+      /* 关键修改：确保图片始终适应容器 */
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+    
+    .loading {
+      position: absolute;
+      font-size: 18px;
+      color: #0078d4;
+      display: none;
+    }
+    
+    /* 按钮组 */
+    .button-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      /* 按钮组固定高度，不占用过多空间 */
+      flex-shrink: 0;
+    }
+    
+    /* 模态框 */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    
+    .modal-content {
+      background: white;
+      padding: 32px;
+      border-radius: 12px;
+      max-width: 500px;
+      margin: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    
+    .modal-content p {
+      line-height: 1.6;
+      color: #333;
+      margin-bottom: 24px;
+    }
+    
+    .modal-content a {
+      color: #0078d4;
+      text-decoration: none;
+    }
+    
+    .modal-content a:hover {
+      text-decoration: underline;
+    }
+    
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    
+    /* 横屏优化 */
+    @media (orientation: landscape) {
+      body {
+        /* 横屏时确保完全无滚动 */
+        overflow-y: hidden;
+      }
+      
+      .main-area {
+        /* 横屏时减少内边距，为图片腾出更多空间 */
+        padding: 16px;
+        gap: 16px;
+      }
+      
+      .image-container {
+        /* 横屏时图片容器更紧凑 */
+        min-height: 0;
+        max-height: calc(100vh - 120px);
+      }
+      
+      .button-group {
+        /* 横屏时按钮组更紧凑 */
+        padding-top: 8px;
+      }
+    }
+    
+    /* 响应式设计 - 已更新 */
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+        height: 100%;
+        min-height: 100vh;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        left: 0;
+        overscroll-behavior-y: none;
+        /* 移动端也禁止滚动 */
+        overflow-y: hidden;
+      }
+    
+      .sidebar {
+        width: 100%;
+        max-height: 40vh;
+        height: auto;
+        min-height: 240px;
+        flex-shrink: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+      }
+    
+      .main-area {
+        flex: 1;
+        min-height: 0;
+        max-height: 60vh;
+        padding: 16px;
+        gap: 16px;
+        overflow: hidden;
+      }
+      
+      .image-container {
+        max-height: 100%;
+        min-height: 0;
+      }
+    
+      .button-group {
+        flex-direction: column;
+        flex-shrink: 0;
+        padding-top: 8px;
+      }
+    
+      .btn {
+        width: 100%;
+      }
+    
+      /* 防止select元素触发视口调整 */
+      select {
+        touch-action: manipulation;
+        font-size: 16px;
+      }
+    
+      select:focus {
+        position: relative;
+        z-index: 1;
+      }
+      
+      /* 移动端横屏特殊处理 */
+      @media (orientation: landscape) and (max-width: 768px) {
+        body {
+          flex-direction: row;
+        }
+        
+        .sidebar {
+          max-height: 100vh;
+          width: 280px;
+          min-height: auto;
+        }
+        
+        .main-area {
+          max-height: 100vh;
+          padding: 16px;
+        }
+        
+        .image-container {
+          max-height: calc(100vh - 100px);
+        }
+      }
+    }
+    
+    /* 针对小屏幕手机的优化 */
+    @media (max-width: 480px) {
+      body {
+        position: fixed;
+        height: 100%;
+        width: 100%;
+      }
+    
+      .sidebar {
+        padding: 16px;
+        gap: 16px;
+        min-height: 220px;
+        max-height: 35vh;
+      }
+      
+      .main-area {
+        padding: 12px;
+        gap: 12px;
+        max-height: 65vh;
+      }
+      
+      .sidebar h1 {
+        font-size: 20px;
+      }
+      
+      select {
+        padding: 8px 30px 8px 10px;
+        font-size: 16px;
+      }
+      
+      .btn {
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+      
+      /* 小屏幕横屏 */
+      @media (orientation: landscape) and (max-width: 480px) {
+        .sidebar {
+          max-height: 100vh;
+          min-height: auto;
+          width: 250px;
+        }
+        
+        .main-area {
+          max-height: 100vh;
+        }
+        
+        .image-container {
+          max-height: calc(100vh - 80px);
+        }
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 左侧控制面板 -->
+  <aside class="sidebar">
+    <h1>🎨 Random Image</h1>
+    <label>Category</label>
+    <ul class="select-list" id="categoryList"></ul>
+    <button class="btn btn-primary" id="loadBtn">Load New Image</button>
+  </aside>
+
+  <!-- 右侧主显示区域 -->
+  <main class="main-area">
+    <div class="image-container">
+      <div class="loading" id="loading">Loading...</div>
+      <img id="mainImage" src="" alt="Random Image" style="display: none;">
+    </div>
+    
+    <div class="button-group">
+      <button class="btn" id="copyBtn" disabled>Copy Image</button>
+      <button class="btn" id="helpBtn">Help</button>
+      <button class="btn" id="disclaimerBtn">Disclaimer</button>
+    </div>
+  </main>
+
+  <script>
+    // ==================== 配置 ====================
+    const CONFIG = {
+      apiBase: 'https://hefollo.com/apis.php?type=',
+      disclaimer: `
+        All content is sourced exclusively from <a href="https://hefollo.com" target="_blank">https://hefollo.com</a>. 
+        MOFOM Inc, CA bears no legal or operational responsibility for any disputes arising from said content. 
+        In cases involving copyright infringement or other concerns, please contact the operator of hefollo.com 
+        via the designated email address: hefollos@gmail.com. Do you agree?
+      `,
+      categories: [
+        {
+          name: "Anime Wallpaper (Phone)",
+          key: "手机端-动漫图片",
+          children: [
+            { name: "Anime Part 1", key: "动漫图片1分区" },
+            { name: "Anime Part 2", key: "动漫图片2分区" },
+            { name: "Anime Part 3", key: "动漫图片3分区" }
+          ]
+        },
+        {
+          name: "Profile Pictures",
+          key: "头像",
+          children: [
+            {
+              name: "Girls",
+              key: "女头",
+              children: [
+                { name: "Girls Part 1", key: "女头图片1分区" }
+              ]
+            }
+          ]
+        },
+        {
+          name: "Photo Sets",
+          key: "妹子套图",
+          children: [
+            { name: "Lolicon", key: "写真-萝莉自拍" },
+            { name: "Part 2", key: "粉色草莓和制服黑丝" }
+          ]
+        },
+        {
+          name: "Cities",
+          key: "手机端-城市图片",
+          children: [
+            { name: "Cities Part 1", key: "城市图片1分区" },
+            { name: "Cities Part 2", key: "城市图片2分区" },
+            { name: "Cities Part 3", key: "城市图片3分区" },
+            { name: "Cities Part 4", key: "城市图片4分区" }
+          ]
+        }
+      ]
+    };
+
+        // ==================== 状态管理 ====================
+        const state = {
+          currentApiUrl: '',
+          isLoading: false
+        };
+    
+        // ==================== DOM 元素 ====================
+        const elements = {
+          categoryList: document.getElementById('categoryList'),
+          mainImage: document.getElementById('mainImage'),
+          loading: document.getElementById('loading'),
+          loadBtn: document.getElementById('loadBtn'),
+          copyBtn: document.getElementById('copyBtn'),
+          helpBtn: document.getElementById('helpBtn'),
+          disclaimerBtn: document.getElementById('disclaimerBtn')
+        };
+    
+        // ==================== 核心功能 ====================
+    
+        // 递归渲染分类选择器
+        function renderCategorySelect(categories, level = 0, selectedKey = '') {
+          if (!categories || categories.length === 0) return '';
+          
+          const selectId = `select_level_${level}`;
+          let options = '';
+          
+          // 为当前级别的所有分类生成选项
+          categories.forEach(cat => {
+            const selected = selectedKey === cat.key ? 'selected' : '';
+            options += `<option value="${cat.key}" ${selected}>${cat.name}</option>`;
+          });
+          
+          return `
+            <li>
+              <select id="${selectId}" data-level="${level}">
+                ${options}
+              </select>
+            </li>
+          `;
+        }
+    
+        // 根据 key 查找分类
+        function findCategory(categories, key) {
+          for (const cat of categories) {
+            if (cat.key === key) return cat;
+            if (cat.children) {
+              const found = findCategory(cat.children, key);
+              if (found) return found;
+            }
+          }
+          return null;
+        }
+    
+        // 根据 key 路径查找分类树
+        function findCategoryByPath(keys) {
+          let current = CONFIG.categories;
+          const path = [];
+          
+          for (const key of keys) {
+            const category = current.find(cat => cat.key === key);
+            if (!category) break;
+            
+            path.push(category);
+            current = category.children || [];
+          }
+          
+          return path;
+        }
+    
+        // 更新分类选择器显示
+        function updateCategorySelectors(selectedPath = []) {
+          elements.categoryList.innerHTML = '';
+          let currentCategories = CONFIG.categories;
+          let currentPath = [];
+          
+          // 渲染所有级别的选择器
+          for (let level = 0; level < selectedPath.length || currentCategories.length > 0; level++) {
+            const selectedKey = selectedPath[level] || '';
+            const selectedCategory = currentCategories.find(cat => cat.key === selectedKey) || currentCategories[0];
+            const actualSelectedKey = selectedCategory ? selectedCategory.key : '';
+            
+            // 渲染当前级别的选择器
+            elements.categoryList.innerHTML += renderCategorySelect(currentCategories, level, actualSelectedKey);
+            
+            // 准备下一级分类
+            if (selectedCategory && selectedCategory.children) {
+              currentCategories = selectedCategory.children;
+              currentPath.push(actualSelectedKey);
+            } else {
+              break;
+            }
+          }
+          
+          // 绑定事件
+          bindCategoryEvents();
+          updateApiUrl();
+        }
+    
+        // 绑定分类选择器事件
+        function bindCategoryEvents() {
+          const selects = elements.categoryList.querySelectorAll('select');
+          
+          selects.forEach((select, index) => {
+            // 移除旧的事件监听器
+            select.replaceWith(select.cloneNode(true));
+            
+            // 添加新的事件监听器
+            const newSelect = elements.categoryList.querySelectorAll('select')[index];
+            newSelect.addEventListener('change', handleCategoryChange);
+          });
+        }
+    
+        // 处理分类变化
+        function handleCategoryChange(e) {
+          const changedSelect = e.target;
+          const level = parseInt(changedSelect.dataset.level);
+          const selectedKey = changedSelect.value;
+          
+          // 获取当前选择的路径
+          const selects = elements.categoryList.querySelectorAll('select');
+          const currentPath = Array.from(selects)
+            .slice(0, level + 1)
+            .map(select => select.value);
+          
+          // 重新渲染选择器
+          updateCategorySelectors(currentPath);
+        }
+    
+        // 更新 API URL
+        function updateApiUrl() {
+          const selects = elements.categoryList.querySelectorAll('select');
+          const keys = Array.from(selects).map(s => s.value);
+          state.currentApiUrl = CONFIG.apiBase + keys.join('/');
+          console.log('API URL:', state.currentApiUrl);
+        }
+    
+        // 初始化分类选择器
+        function initCategories() {
+          // 设置默认选择路径（第一个分类的完整路径）
+          const defaultPath = getDefaultCategoryPath();
+          updateCategorySelectors(defaultPath);
+        }
+    
+        // 获取默认分类路径
+        function getDefaultCategoryPath() {
+          const path = [];
+          let current = CONFIG.categories[0]; // 从第一个分类开始
+          
+          while (current) {
+            path.push(current.key);
+            current = current.children && current.children[0] ? current.children[0] : null;
+          }
+          
+          return path;
+        }
+    
+        // 设置加载状态
+        function setLoading(isLoading) {
+          state.isLoading = isLoading;
+          elements.loading.style.display = isLoading ? 'block' : 'none';
+          elements.mainImage.style.display = isLoading ? 'none' : 'block';
+          elements.loadBtn.disabled = isLoading;
+          elements.copyBtn.disabled = isLoading || !elements.mainImage.src;
+          
+          if (isLoading) {
+            elements.loadBtn.textContent = 'Loading...';
+          } else {
+            elements.loadBtn.textContent = 'Load New Image';
+          }
+        }
+    
+        // 加载图片
+        function loadImage() {
+          if (!state.currentApiUrl) {
+            alert('Please select a category first.');
+            return;
+          }
+    
+          setLoading(true);
+          const url = state.currentApiUrl + '&t=' + Date.now();
+    
+          elements.mainImage.onload = () => {
+            setLoading(false);
+            console.log('Image loaded successfully');
+          };
+    
+          elements.mainImage.onerror = () => {
+            setLoading(false);
+            alert('Failed to load image. Please try again.');
+          };
+    
+          elements.mainImage.src = url;
+        }
+    
+        // 复制图片到剪贴板
+        async function copyImage() {
+          if (!elements.mainImage.src) {
+            alert('No image to copy. Please load an image first.');
+            return;
+          }
+    
+          const originalText = elements.copyBtn.textContent;
+          elements.copyBtn.disabled = true;
+          elements.copyBtn.textContent = 'Copying...';
+    
+          try {
+            // 创建隐藏的可编辑容器
+            const container = document.createElement('div');
+            container.contentEditable = true;
+            container.style.position = 'fixed';
+            container.style.left = '-9999px';
+            container.style.opacity = '0';
+            document.body.appendChild(container);
+    
+            // 克隆图片到容器
+            const imgClone = elements.mainImage.cloneNode(true);
+            imgClone.style.maxWidth = 'none';
+            imgClone.style.maxHeight = 'none';
+            container.appendChild(imgClone);
+    
+            // 选中图片
+            const range = document.createRange();
+            range.selectNode(imgClone);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+    
+            // 执行复制
+            const success = document.execCommand('copy');
+    
+            // 清理
+            selection.removeAllRanges();
+            document.body.removeChild(container);
+    
+            if (success) {
+              elements.copyBtn.textContent = '✓ Copied!';
+              setTimeout(() => {
+                elements.copyBtn.textContent = originalText;
+                elements.copyBtn.disabled = false;
+              }, 2000);
+              console.log('Image copied successfully');
+            } else {
+              throw new Error('Copy command failed');
+            }
+          } catch (error) {
+            console.error('Copy failed:', error);
+            alert('Failed to copy image. Please right-click the image and select "Copy Image".');
+            elements.copyBtn.textContent = originalText;
+            elements.copyBtn.disabled = false;
+          }
+        }
+    
+        // 显示模态框
+        function showModal(message, onConfirm, onCancel) {
+          const modal = document.createElement('div');
+          modal.className = 'modal';
+          modal.innerHTML = `
+            <div class="modal-content">
+              <p>${message}</p>
+              <div class="modal-buttons">
+                <button class="btn" id="modalYes">Yes, I Agree</button>
+                <button class="btn" id="modalNo">No</button>
+              </div>
+            </div>
+          `;
+    
+          document.body.appendChild(modal);
+    
+          modal.querySelector('#modalYes').addEventListener('click', () => {
+            document.body.removeChild(modal);
+            if (onConfirm) onConfirm();
+          });
+    
+          modal.querySelector('#modalNo').addEventListener('click', () => {
+            document.body.removeChild(modal);
+            if (onCancel) onCancel();
+          });
+        }
+    
+        // ==================== 事件绑定 ====================
+        elements.loadBtn.addEventListener('click', loadImage);
+        elements.copyBtn.addEventListener('click', copyImage);
+        elements.helpBtn.addEventListener('click', () => {
+          window.open('https://mofom.net/mofomvideo/help', '_blank');
+        });
+        elements.disclaimerBtn.addEventListener('click', () => {
+          showModal(CONFIG.disclaimer, 
+            () => loadImage(),
+            () => window.location.href = 'https://mofom.net'
+          );
+        });
+    
+        // ==================== 初始化 ====================
+        initCategories();
+        
+        // 显示免责声明
+        setTimeout(() => {
+          showModal(CONFIG.disclaimer, 
+            () => loadImage(),
+            () => window.location.href = 'https://mofom.net'
+          );
+        }, 500);
+  </script>
+</body>
+</html>
