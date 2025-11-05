@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>countries and capitals</title>
+		<style>
+			/* 基础样式重置和变量定义 */
+			:root {
+			  --primary-color: #7066f0;
+			  --primary-hover: #423c8e;
+			  --secondary-color: #e6d6a4;
+			  --success-color: #08ad00;
+			  --text-color: #0d0721;
+			  --white: #ffffff;
+			  --font-family: Arial, Helvetica, sans-serif;
+			  --border-radius: 4px;
+			  --transition: all 0.3s ease;
+			}
+			
+			* {
+			  box-sizing: border-box;
+			}
+			
+			body {
+			  font-family: var(--font-family);
+			  color: var(--text-color);
+			  margin: 0;
+			  padding: 0;
+			  line-height: 1.5;
+			}
+			
+			/* 通用页面样式 */
+			.gamePage {
+			  display: none;
+			  padding: 20px;
+			  max-width: 1200px;
+			  margin: 0 auto;
+			}
+			
+			/* 首页样式 */
+			#pg1 {
+			  display: flex;
+			  flex-direction: column;
+			  align-items: center;
+			  text-align: center;
+			}
+			
+			#pg1 h1 {
+			  margin-bottom: 20px;
+			  color: var(--primary-color);
+			}
+			
+			#pg1Img {
+			  display: flex;
+			  flex-direction: column;
+			  align-items: center;
+			  margin-bottom: 20px;
+			}
+			
+			#pg1Img img {
+			  width: min(50vw, 80px);
+			  height: auto;
+			  margin-bottom: 10px;
+			}
+			
+			#pg1 p {
+			  font-size: 12px;
+			  color: #666;
+			  margin: 0;
+			}
+			
+			/* 设置区域样式 */
+			#settings {
+			  width: 100%;
+			  max-width: 500px;
+			}
+			
+			#mainSetting {
+			  display: flex;
+			  flex-direction: column;
+			  margin: 20px 0;
+			  gap: 15px;
+			}
+			
+			#mainSetting label {
+			  font-weight: bold;
+			  margin-bottom: 5px;
+			}
+			
+			#mainSetting select,
+			#mainSetting input {
+			  padding: 8px 12px;
+			  border: 1px solid #ccc;
+			  border-radius: var(--border-radius);
+			  font-family: var(--font-family);
+			}
+			
+			.c_q_a {
+			  display: none;
+			}
+			
+			/* 手风琴组件样式 */
+			.according {
+			  width: 100%;
+			}
+			
+			.according-item {
+			  margin-bottom: 10px;
+			  border-radius: var(--border-radius);
+			  overflow: hidden;
+			  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+			}
+			
+			.according-title {
+			  color: var(--white);
+			  background: var(--primary-color);
+			  padding: 12px 15px;
+			  cursor: pointer;
+			  transition: var(--transition);
+			  font-weight: bold;
+			}
+			
+			.according-title:hover {
+			  background: var(--primary-hover);
+			}
+			
+			.according-content {
+			  background: var(--secondary-color);
+			  padding: 15px;
+			  display: none;
+			}
+			
+			.according-item.active .according-content {
+			  display: block;
+			}
+			
+			.according-content button {
+			  background: var(--primary-color);
+			  color: var(--white);
+			  border: none;
+			  padding: 8px 15px;
+			  border-radius: var(--border-radius);
+			  cursor: pointer;
+			  margin-top: 10px;
+			  transition: var(--transition);
+			}
+			
+			.according-content button:hover {
+			  background: var(--primary-hover);
+			}
+			
+			/* 考试页面样式 */
+			#examPage {
+			  display: flex;
+			  flex-direction: column;
+			  align-items: center;
+			}
+			
+			#examPage .head {
+			  text-align: center;
+			  margin-bottom: 20px;
+			  width: 100%;
+			}
+			
+			#examPage .head h1 {
+			  color: var(--primary-color);
+			  margin-bottom: 10px;
+			}
+			
+			#examPageImage {
+			  max-width: 100%;
+			  height: auto;
+			  margin: 20px 0;
+			  border-radius: var(--border-radius);
+			  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+			}
+			
+			#selection {
+			  display: grid;
+			  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+			  gap: 10px;
+			  width: 100%;
+			  max-width: 600px;
+			}
+			
+			#selection button {
+			  padding: 12px;
+			  background: var(--primary-color);
+			  color: var(--white);
+			  border: none;
+			  border-radius: var(--border-radius);
+			  cursor: pointer;
+			  transition: var(--transition);
+			  font-size: 16px;
+			}
+			
+			#selection button:hover {
+			  background: var(--primary-hover);
+			  /* transform: translateY(-2px); */
+			}
+			
+			/* 结果页面样式 */
+			#resultPage {
+			    text-align: center;
+			    display: flex;
+			    flex-direction: column;
+			    align-items: center;
+			}
+			
+			/* table {
+			  border: 1px solid var(--text-color);
+			  border-collapse: collapse;
+			  width: 100%;
+			  max-width: 600px;
+			  margin: 0 auto 20px;
+			  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+			}
+			
+			table tr:nth-child(even) {
+			  background-color: #f9f9f9;
+			}
+			
+			table td {
+			  padding: 10px;
+			  border: 1px solid #ddd;
+			}
+			
+			table tr:first-child {
+			  background-color: var(--success-color);
+			  color: var(--white);
+			  font-weight: bold;
+			} */
+			
+			#resultPage button {
+			  background: var(--primary-color);
+			  color: var(--white);
+			  border: none;
+			  padding: 10px 20px;
+			  border-radius: var(--border-radius);
+			  cursor: pointer;
+			  transition: var(--transition);
+			  font-size: 16px;
+			}
+			
+			#resultPage button:hover {
+			  background: var(--primary-hover);
+			  transform: translateY(-2px);
+			}
+			
+			/* 响应式设计 */
+			@media (max-width: 768px) {
+			  .gamePage {
+			    padding: 15px;
+			  }
+			  
+			  #selection {
+			    grid-template-columns: 1fr;
+			  }
+			  
+			  #pg1Img img {
+			    width: 70vw;
+			  }
+			}
+			
+			@media (max-width: 480px) {
+			  .gamePage {
+			    padding: 10px;
+			  }
+			  
+			  #pg1 h1 {
+			    font-size: 1.5rem;
+			  }
+			  
+			  .according-title,
+			  .according-content {
+			    padding: 10px;
+			  }
+			}
+		</style>
+	</head>
+	<body>
+		<div id="pg1" class="gamePage">
+			<h1>EXAMS ABOUT COUNTRIES!</h1>
+			<div id="pg1Img">
+				<img src="https://flagcdn.com/w640/us.png" alt="" />
+				<p>if you can't see this picture, you can't do the flag exam</p>
+			</div>
+			<div id="settings">
+				<div id="mainSetting">
+					<label for="range">select range</label>
+					<select name="range" id="range">
+						<option value="wr">worldwide</option>
+						<option value="as">Asia</option>
+						<option value="eu">Europe</option>
+						<option value="af">Africa</option>
+						<option value="am">America</option>
+						<option value="oc">Oceania</option>
+					</select>
+					<label for="questions">select amount of questions</label>
+					<select name="questions" id="questions">
+						<option value="10">10</option>
+						<option value="25">25</option>
+						<option value="35">35</option>
+						<option value="45">45</option>
+						<option value="custom">custom</option>
+					</select>
+					<label for="custom_qu_amount" class="c_q_a">enter the amout of question:</label>
+					<input type="number" name="custom_qu_amount" id="custom_qu_amount" class="c_q_a" value="1" min="1"/>
+					<label for="options_amount">number of options for each question</label>
+					<select name="options_amount" id="options_amount">
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+					</select>
+				</div>
+				<div class="according">
+				<div class="according-item">
+				    <div class="according-title">
+				        flag test
+				    </div>
+				    <div class="according-content">
+						answer the country name based on the flag
+						<button onclick="startFlagExam()">start</button>
+					</div>
+				</div>
+				<div class="according-item">
+				    <div class="according-title">
+				        capital test
+				    </div>
+				    <div class="according-content">
+						answer the city name based on the country name
+						<button onclick="start_capital_test()">start</button>
+					</div>
+				</div>
+			</div>
+			</div>
+			
+			<!-- <button onclick="switchPageTo(exampage)">go exam</button> -->
+		</div>
+		<div id="examPage" class="gamePage">
+			<div class="head">
+				<h1 id="examPageTitle">title</h1>
+				<p id="questions_rma"></p>
+			</div>
+			
+			<img src="" alt="" id="examPageImage" />
+			<div id="selection">
+				<button></button>
+				<button></button>
+			</div>
+		</div>
+		<div id="resultPage" class="gamePage">
+			<table border="" cellspacing="0" cellpadding="3px" id="statistics_table">
+				<tr style="background-color: #08ad00; color: #fff;"><td>a</td><td>b</td></tr>
+			</table>
+			<button onclick="init()">inititalzation</button>
+		</div>
+		<script src="script.js"></script>
+		<script>
+			const accodingItems = document.querySelectorAll(".according-item");
+			accodingItems.forEach(item => {
+			    const title = item.querySelector(".according-title");
+			    const content = item.querySelector(".according-content");
+			
+			    title.addEventListener('click', () => {
+			        for (var i = 0; i < accodingItems.length; i++) {
+			            if (accodingItems[i] != item) {
+			                accodingItems[i].classList.remove('active');
+			            } else {
+			                item.classList.toggle('active');
+			            }
+			        }
+			
+			    });
+			});
+		</script>
+	</body>
+</html>
