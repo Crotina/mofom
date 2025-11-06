@@ -234,6 +234,7 @@ function init() {
 	document.getElementById('forOverview').style.display = 'none';
 	statistics_table.style.display = 'block';
 	statistics_title.style.display = 'block';
+	examPageImage.style.display = 'block';
 }
 
 function switchPageTo(page) {
@@ -565,5 +566,6 @@ questions.addEventListener('change', () => {
 		});
 	}
 });
+
 
 init();
