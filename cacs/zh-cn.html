@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>countries and capitals</title>
+		<style>
+			/* 基础样式重置和变量定义 */
+			:root {
+			  --primary-color: #7066f0;
+			  --primary-hover: #423c8e;
+			  --secondary-color: #e6d6a4;
+			  --success-color: #08ad00;
+			  --text-color: #0d0721;
+			  --white: #ffffff;
+			  --font-family: Arial, Helvetica, sans-serif;
+			  --border-radius: 4px;
+			  --transition: all 0.3s ease;
+			}
+			
+			* {
+			  box-sizing: border-box;
+			}
+			
+			body {
+			  font-family: var(--font-family);
+			  color: var(--text-color);
+			  margin: 0;
+			  padding: 0;
+			  line-height: 1.5;
+			}
+			
+			/* 通用页面样式 */
+			.gamePage {
+			  display: none;
+			  padding: 20px;
+			  max-width: 70vw;
+			  margin: 0 auto;
+			}
+			
+			/* 首页样式 */
+			#pg1 {
+			  display: flex;
+			  flex-direction: column;
+			  align-items: center;
+			  text-align: center;
+			}
+			
+			#pg1 h1 {
+			  margin-bottom: 20px;
+			  color: var(--primary-color);
+			}
+			
+			#pg1Img {
+			  display: flex;
+			  flex-direction: column;
+			  align-items: center;
+			  margin-bottom: 20px;
+			}
+			
+			#pg1Img img {
+			  width: min(50vw, 80px);
+			  height: auto;
+			  margin-bottom: 10px;
+			}
+			
+			#pg1 p {
+			  font-size: 12px;
+			  color: #666;
+			  margin: 0;
+			}
+			
+			/* 设置区域样式 */
+			#settings {
+			  width: 100%;
+			  max-width: 500px;
+			}
+			
+			#mainSetting {
+			  display: flex;
+			  flex-direction: column;
+			  margin: 20px 0;
+			  gap: 15px;
+			}
+			
+			#mainSetting label {
+			  font-weight: bold;
+			  margin-bottom: 5px;
+			}
+			
+			#mainSetting select,
+			#mainSetting input {
+			  padding: 8px 12px;
+			  border: 1px solid #ccc;
+			  border-radius: var(--border-radius);
+			  font-family: var(--font-family);
+			}
+			
+			.c_q_a {
+			  display: none;
+			}
+			
+			/* 手风琴组件样式 */
+			.according {
+			  width: 100%;
+			}
+			
+			.according-item {
+			  margin-bottom: 10px;
+			  border-radius: var(--border-radius);
+			  overflow: hidden;
+			  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+			}
+			
+			.according-title {
+			  color: var(--white);
+			  background: var(--primary-color);
+			  padding: 12px 15px;
+			  cursor: pointer;
+			  transition: var(--transition);
+			  font-weight: bold;
+			}
+			
+			.according-title:hover {
+			  background: var(--primary-hover);
+			}
+			
+			.according-content {
+			  background: var(--secondary-color);
+			  padding: 15px;
+			  display: none;
+			}
+			
+			.according-item.active .according-content {
+			  display: block;
+			}
+			
+			.according-content button {
+			  background: var(--primary-color);
+			  color: var(--white);
+			  border: none;
+			  padding: 8px 15px;
+			  border-radius: var(--border-radius);
+			  cursor: pointer;
+			  margin-top: 10px;
+			  transition: var(--transition);
+			}
+			
+			.according-content button:hover {
+			  background: var(--primary-hover);
+			}
+			
+			/* 考试页面样式 */
+			#examPage {
+			  display: flex;
+			  flex-direction: column;
+			  align-items: center;
+			}
+			
+			#examPage .head {
+			  text-align: center;
+			  width: 100%;
+			}
+			
+			#examPage .head h1 {
+			  color: var(--primary-color);
+			  margin-bottom: 10px;
+			}
+			#examPage .head p {
+				margin: 0px;
+				line-height: 1.3rem;
+			}
+			
+			#examPageImage {
+			  max-width: 100%;
+			  height: auto;
+			  margin: 20px 0;
+			  border-radius: var(--border-radius);
+			  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+			}
+			
+			#selection {
+			  display: grid;
+			  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+			  gap: 10px;
+			  width: 100%;
+			  max-width: 600px;
+			}
+			
+			#selection button {
+			  padding: 12px;
+			  background: var(--primary-color);
+			  color: var(--white);
+			  border: none;
+			  border-radius: var(--border-radius);
+			  cursor: pointer;
+			  transition: var(--transition);
+			  font-size: 16px;
+			}
+			
+			#selection button:hover {
+			  background: var(--primary-hover);
+			  /* transform: translateY(-2px); */
+			}
+			
+			/* 结果页面样式 */
+			#resultPage {
+			    text-align: center;
+			    display: flex;
+			    flex-direction: column;
+			    align-items: center;
+			}
+			
+			/* table {
+			  border: 1px solid var(--text-color);
+			  border-collapse: collapse;
+			  width: 100%;
+			  max-width: 600px;
+			  margin: 0 auto 20px;
+			  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+			}
+			
+			table tr:nth-child(even) {
+			  background-color: #f9f9f9;
+			}
+			
+			table td {
+			  padding: 10px;
+			  border: 1px solid #ddd;
+			}
+			
+			table tr:first-child {
+			  background-color: var(--success-color);
+			  color: var(--white);
+			  font-weight: bold;
+			} */
+			
+			#resultPage button {
+			  background: var(--primary-color);
+			  color: var(--white);
+			  border: none;
+			  padding: 10px 20px;
+			  border-radius: var(--border-radius);
+			  cursor: pointer;
+			  transition: var(--transition);
+			  font-size: 16px;
+			}
+			
+			#resultPage button:hover {
+			  background: var(--primary-hover);
+			  transform: translateY(-2px);
+			}
+			
+			/* 响应式设计 */
+			@media (max-width: 768px) {
+			  .gamePage {
+			    padding: 15px;
+				max-width: 95vw;
+			  }
+			  
+			  #selection {
+			    grid-template-columns: 1fr;
+			  }
+			  
+			  #pg1Img img {
+			    width: 70vw;
+			  }
+			}
+			
+			@media (max-width: 480px) {
+			  .gamePage {
+			    padding: 10px;
+			  }
+			  
+			  #pg1 h1 {
+			    font-size: 1.5rem;
+			  }
+			  
+			  .according-title,
+			  .according-content {
+			    padding: 10px;
+			  }
+			}
+			#forOverview {
+				display: none;
+				width: 100%;
+			}
+			.overview-image {
+				width: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="pg1" class="gamePage">
+			<h1>有关国家的小测！</h1>
+			<div id="pg1Img">
+				<img src="https://flagcdn.com/w640/cn.png" alt="" />
+				<p>如果你加载不出这张图片，这代表你不能进行国旗考试</p>
+			</div>
+			<div id="settings">
+				<div id="mainSetting">
+					<label for="range">选择范围</label>
+					<select name="range" id="range">
+						<option value="wr">全世界</option>
+						<option value="as">仅亚洲</option>
+						<option value="eu">仅欧洲</option>
+						<option value="af">仅非洲</option>
+						<option value="am">仅美洲</option>
+						<option value="oc">仅大洋洲</option>
+					</select>
+					<label for="questions">选择问题数量</label>
+					<select name="questions" id="questions">
+						<option value="10">10</option>
+						<option value="25">25</option>
+						<option value="35">35</option>
+						<option value="45">45</option>
+						<option value="custom">自定义</option>
+					</select>
+					<label for="custom_qu_amount" class="c_q_a">自定义问题数量</label>
+					<input type="number" name="custom_qu_amount" id="custom_qu_amount" class="c_q_a" value="1" min="1"/>
+					<label for="options_amount">选择每个问题的选项数量</label>
+					<select name="options_amount" id="options_amount">
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+					</select>
+				</div>
+				<div class="according">
+				<div class="according-item">
+				    <div class="according-title">
+				        国旗测试
+				    </div>
+				    <div class="according-content">
+						根据展示的国旗，选择正确的国家
+						<button onclick="startFlagExam()">开始</button>
+					</div>
+				</div>
+				<div class="according-item">
+				    <div class="according-title">
+				        首都测试
+				    </div>
+				    <div class="according-content">
+						根据给出的国家名称，回答出正确的首都名称
+						<button onclick="start_capital_test()">开始</button>
+					</div>
+				</div>
+				<div class="according-item">
+				    <div class="according-title">
+				        国家测试
+				    </div>
+				    <div class="according-content">
+						根据给出的首都名称，回答它属于哪个国家
+						<button onclick="startCountryExam()">开始</button>
+					</div>
+				</div>
+				<div class="according-item">
+				    <div class="according-title">
+				        总览
+				    </div>
+				    <div class="according-content">
+						看所有国家，国旗，以及它们的首都
+						<button onclick="overview()">开始</button>
+					</div>
+				</div>
+			</div>
+			</div>
+			
+			<!-- <button onclick="switchPageTo(exampage)">go exam</button> -->
+		</div>
+		<div id="examPage" class="gamePage">
+			<div class="head">
+				<h1 id="examPageTitle">title</h1>
+				<p id="questions_rma"></p>
+			</div>
+			
+			<img src="" alt="" id="examPageImage" />
+			<div id="selection">
+				<button></button>
+				<button></button>
+			</div>
+		</div>
+		
+		<div id="resultPage" class="gamePage">
+			<h1 id="statistics_title">statistics</h1>
+			<table border="" cellspacing="0" cellpadding="3px" id="statistics_table">
+				
+				<tr style="background-color: #08ad00; color: #fff;"><td>a</td><td>b</td></tr>
+			</table>
+			<div id="forOverview">
+				
+				<div class="according-item">
+				    <div class="according-title">
+				        overview
+				    </div>
+				    <div class="according-content">
+						<table border="" cellspacing="0" cellpadding="3px" id="statistics_table">
+							
+						</table>
+					</div>
+				</div>
+				
+			</div>
+			<button onclick="init()">回到主界面</button>
+		</div>
+		
+		<script src="zhcn-script.js"></script>
+		<script>
+			// 将事件监听器绑定到父元素上
+			document.addEventListener('click', (e) => {
+			    // 检查点击的是否是.according-title元素
+			    if (e.target.classList.contains('according-title')) {
+			        const item = e.target.closest('.according-item');
+			        const allItems = document.querySelectorAll('.according-item');
+			        
+			        for (let i = 0; i < allItems.length; i++) {
+			            if (allItems[i] !== item) {
+			                allItems[i].classList.remove('active');
+			            } else {
+			                item.classList.toggle('active');
+			            }
+			        }
+			    }
+			});
+		</script>
+	</body>
+</html>
