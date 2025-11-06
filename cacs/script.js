@@ -37,7 +37,7 @@ const DATA = {
     { "country": "United Arab Emirates", "capital": "Abu Dhabi", "countryCode": "ae" },
     { "country": "Bahrain", "capital": "Manama", "countryCode": "bh" },
     { "country": "Oman", "capital": "Muscat", "countryCode": "om" },
-    { "country": "Yemen", "capital": "Sana'a", "countryCode": "ye" },
+    { "country": "Yemen", "capital": "Sana\'a", "countryCode": "ye" },
     { "country": "Saudi Arabia", "capital": "Riyadh", "countryCode": "sa" },
     { "country": "Jordan", "capital": "Amman", "countryCode": "jo" },
     { "country": "Palestine", "capital": "Jerusalem", "countryCode": "ps" },
@@ -120,7 +120,7 @@ const DATA = {
     { "country": "Ivory Coast", "capital": "Yamoussoukro", "countryCode": "ci" },
     { "country": "Burkina Faso", "capital": "Ouagadougou", "countryCode": "bf" },
     { "country": "Niger", "capital": "Niamey", "countryCode": "ne" },
-    { "country": "Chad", "capital": "N'Djamena", "countryCode": "td" },
+    { "country": "Chad", "capital": "N\'Djamena", "countryCode": "td" },
     { "country": "Nigeria", "capital": "Abuja", "countryCode": "ng" },
     { "country": "Ghana", "capital": "Accra", "countryCode": "gh" },
     { "country": "Togo", "capital": "Lome", "countryCode": "tg" },
@@ -169,11 +169,11 @@ const DATA = {
     { "country": "Dominican Republic", "capital": "Santo Domingo", "countryCode": "do" },
     { "country": "Jamaica", "capital": "Kingston", "countryCode": "jm" },
     { "country": "Saint Kitts and Nevis", "capital": "Basseterre", "countryCode": "kn" },
-    { "country": "Antigua and Barbuda", "capital": "Saint John's", "countryCode": "ag" },
+    { "country": "Antigua and Barbuda", "capital": "Saint John\'s", "countryCode": "ag" },
     { "country": "Dominica", "capital": "Roseau", "countryCode": "dm" },
     { "country": "Saint Lucia", "capital": "Castries", "countryCode": "lc" },
     { "country": "Saint Vincent and the Grenadines", "capital": "Kingstown", "countryCode": "vc" },
-    { "country": "Grenada", "capital": "St. George's", "countryCode": "gd" },
+    { "country": "Grenada", "capital": "St. George\'s", "countryCode": "gd" },
     { "country": "Barbados", "capital": "Bridgetown", "countryCode": "bb" },
     { "country": "Trinidad and Tobago", "capital": "Port of Spain", "countryCode": "tt" },
     { "country": "Montserrat", "capital": "Plymouth", "countryCode": "ms" }
@@ -185,7 +185,7 @@ const DATA = {
     { "country": "Vanuatu", "capital": "Port Vila", "countryCode": "vu" },
     { "country": "New Zealand", "capital": "Wellington", "countryCode": "nz" },
     { "country": "Fiji", "capital": "Suva", "countryCode": "fj" },
-    { "country": "Tonga", "capital": "Nuku'alofa", "countryCode": "to" },
+    { "country": "Tonga", "capital": "Nuku\'alofa", "countryCode": "to" },
     { "country": "Nauru", "capital": "Yaren", "countryCode": "nr" },
     { "country": "Kiribati", "capital": "Tarawa", "countryCode": "ki" },
     { "country": "Tuvalu", "capital": "Funafuti", "countryCode": "tv" },
@@ -569,3 +569,4 @@ questions.addEventListener('change', () => {
 
 
 init();
+
