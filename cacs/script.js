@@ -214,6 +214,7 @@ const examPageImage = document.getElementById('examPageImage');
 const selecta = document.getElementById('selection');
 const questions_rma = document.getElementById('questions_rma');
 const statistics_table = document.getElementById('statistics_table');
+const statistics_title = document.getElementById('statistics_title');
 
 let totalQuestion = 0;
 let questionAnswered = 0;
@@ -232,6 +233,7 @@ function init() {
 	gameType = "";
 	document.getElementById('forOverview').style.display = 'none';
 	statistics_table.style.display = 'block';
+	statistics_title.style.display = 'block';
 }
 
 function switchPageTo(page) {
@@ -307,7 +309,6 @@ function setNewCountryTest(gameSet) {
 	
 	answersCountry = answersCountry.concat(temp);
 	answersCountry = shuffleArray(answersCountry);
-	console.log(answersCountry);
 	
 	currentAnswer = questionCountry.country;
 	let char = 'A';
@@ -363,7 +364,7 @@ function SetNewFlagExamQuestion(gameSet) {
 	
 	answersCountry = answersCountry.concat(temp);
 	answersCountry = shuffleArray(answersCountry);
-	console.log(answersCountry.length);
+	// console.log(answersCountry.length);
 	
 	currentAnswer = questionCountry.country;
 	let char = 'A';
@@ -421,7 +422,7 @@ function setNewCapitalTest(gameSet) {
 	
 	answersCountry = answersCountry.concat(temp);
 	answersCountry = shuffleArray(answersCountry);
-	console.log(answersCountry);
+	// console.log(answersCountry);
 	
 	currentAnswer = questionCountry.capital;
 	let char = 'A';
@@ -468,13 +469,18 @@ function submit(answer) {
 function setResultPage() {
 	switchPageTo(resultpg);
 	let statistics_contents = "";
+	let correctaa = 0;
 	statistics_contents += `<tr><th>question</th><th>correct answer</th><th>your answer</th></tr>`;
 	for(let i = 0; i < statistics.length; i++){
 		let qwq = statistics[i];
-		(qwq.correct_answer == qwq.your_answer) ? '#08ad00' : '#ec1212';
+		
+		if(qwq.correct_answer == qwq.your_answer) {
+			correctaa++;
+		}
 		statistics_contents += `<tr style="background-color: ${(qwq.correct_answer == qwq.your_answer) ? '#08ad00' : '#ec1212'}; color: #fff;"><td>${qwq.questionStr}</td><td>${qwq.correct_answer}</td><td>${qwq.your_answer}</td></tr>`;
 	}
 	statistics_table.innerHTML = statistics_contents;
+	statistics_title.textContent = `${correctaa}/${statistics.length} correct, (${100*(correctaa/(statistics.length))}% correct)`;
 }
 
 function overview() {
@@ -482,6 +488,7 @@ function overview() {
 	const ovv = document.getElementById('forOverview');
 	ovv.style.display = 'block';
 	statistics_table.style.display = 'none';
+	statistics_title.style.display = 'none';
 	let content = "";
 	const load = [
 		{ name: 'asia', data: DATA.asia },
