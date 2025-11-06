@@ -33,7 +33,7 @@
 			.gamePage {
 			  display: none;
 			  padding: 20px;
-			  max-width: 1200px;
+			  max-width: 70vw;
 			  margin: 0 auto;
 			}
 			
@@ -158,13 +158,16 @@
 			
 			#examPage .head {
 			  text-align: center;
-			  margin-bottom: 20px;
 			  width: 100%;
 			}
 			
 			#examPage .head h1 {
 			  color: var(--primary-color);
 			  margin-bottom: 10px;
+			}
+			#examPage .head p {
+				margin: 0px;
+				line-height: 1.3rem;
 			}
 			
 			#examPageImage {
@@ -251,6 +254,7 @@
 			@media (max-width: 768px) {
 			  .gamePage {
 			    padding: 15px;
+				max-width: 95vw;
 			  }
 			  
 			  #selection {
@@ -275,6 +279,13 @@
 			  .according-content {
 			    padding: 10px;
 			  }
+			}
+			#forOverview {
+				display: none;
+				width: 100%;
+			}
+			.overview-image {
+				width: 100%;
 			}
 		</style>
 	</head>
@@ -332,6 +343,24 @@
 						<button onclick="start_capital_test()">start</button>
 					</div>
 				</div>
+				<div class="according-item">
+				    <div class="according-title">
+				        country test
+				    </div>
+				    <div class="according-content">
+						answer the country name based on the city name
+						<button onclick="startCountryExam()">start</button>
+					</div>
+				</div>
+				<div class="according-item">
+				    <div class="according-title">
+				        overview
+				    </div>
+				    <div class="according-content">
+						view all countries and their capital
+						<button onclick="overview()">start</button>
+					</div>
+				</div>
 			</div>
 			</div>
 			
@@ -349,29 +378,45 @@
 				<button></button>
 			</div>
 		</div>
+		
 		<div id="resultPage" class="gamePage">
 			<table border="" cellspacing="0" cellpadding="3px" id="statistics_table">
 				<tr style="background-color: #08ad00; color: #fff;"><td>a</td><td>b</td></tr>
 			</table>
-			<button onclick="init()">inititalzation</button>
+			<div id="forOverview">
+				
+				<div class="according-item">
+				    <div class="according-title">
+				        overview
+				    </div>
+				    <div class="according-content">
+						<table border="" cellspacing="0" cellpadding="3px" id="statistics_table">
+							
+						</table>
+					</div>
+				</div>
+				
+			</div>
+			<button onclick="init()">go back</button>
 		</div>
+		
 		<script src="script.js"></script>
 		<script>
-			const accodingItems = document.querySelectorAll(".according-item");
-			accodingItems.forEach(item => {
-			    const title = item.querySelector(".according-title");
-			    const content = item.querySelector(".according-content");
-			
-			    title.addEventListener('click', () => {
-			        for (var i = 0; i < accodingItems.length; i++) {
-			            if (accodingItems[i] != item) {
-			                accodingItems[i].classList.remove('active');
+			// 将事件监听器绑定到父元素上
+			document.addEventListener('click', (e) => {
+			    // 检查点击的是否是.according-title元素
+			    if (e.target.classList.contains('according-title')) {
+			        const item = e.target.closest('.according-item');
+			        const allItems = document.querySelectorAll('.according-item');
+			        
+			        for (let i = 0; i < allItems.length; i++) {
+			            if (allItems[i] !== item) {
+			                allItems[i].classList.remove('active');
 			            } else {
 			                item.classList.toggle('active');
 			            }
 			        }
-			
-			    });
+			    }
 			});
 		</script>
 	</body>

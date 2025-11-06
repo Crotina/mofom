@@ -27,7 +27,7 @@ const DATA = {
     { "country": "Afghanistan", "capital": "Kabul", "countryCode": "af" },
     { "country": "Tajikistan", "capital": "Dushanbe", "countryCode": "tj" },
     { "country": "Kyrgyzstan", "capital": "Bishkek", "countryCode": "kg" },
-    { "country": "Kazakhstan", "capital": "Nur-Sultan", "countryCode": "kz" },
+    { "country": "Kazakhstan", "capital": "Astana", "countryCode": "kz" },
     { "country": "Uzbekistan", "capital": "Tashkent", "countryCode": "uz" },
     { "country": "Turkmenistan", "capital": "Ashgabat", "countryCode": "tm" },
     { "country": "Iran", "capital": "Tehran", "countryCode": "ir" },
@@ -91,6 +91,7 @@ const DATA = {
     { "country": "Serbia", "capital": "Belgrade", "countryCode": "rs" },
     { "country": "North Macedonia", "capital": "Skopje", "countryCode": "mk" },
     { "country": "Albania", "capital": "Tirana", "countryCode": "al" },
+	{ "country": "Kosovo", "capital": "Prishtina", "countryCode": "xk" },
     { "country": "Romania", "capital": "Bucharest", "countryCode": "ro" },
     { "country": "Bulgaria", "capital": "Sofia", "countryCode": "bg" },
     { "country": "Greece", "capital": "Athens", "countryCode": "gr" }
@@ -220,6 +221,7 @@ let currentAnswer = "";
 let statistics = [];
 let gameType = "";
 let public_game_set = {};
+let currentquestionstr = "";
 
 function init() {
 	switchPageTo(mainpage);
@@ -228,6 +230,8 @@ function init() {
 	currentAnswer = "";
 	statistics = [];
 	gameType = "";
+	document.getElementById('forOverview').style.display = 'none';
+	statistics_table.style.display = 'block';
 }
 
 function switchPageTo(page) {
@@ -266,6 +270,61 @@ function shuffleArray(array) {
   return shuffled;
 }
 
+function startCountryExam() {
+	public_game_set = getSettings();
+	totalQuestion = public_game_set.questions;
+	gameType = "country";
+	console.log(public_game_set);
+	switchPageTo(exampage);
+	setNewCountryTest(public_game_set);
+}
+
+function setNewCountryTest(gameSet) {
+	questionAnswered++;
+	let questionCountry = selectRandomCountry(gameSet.range);
+	let answersCountry = [questionCountry];
+	let answersHtmlElements = "";
+	let temp = [];
+	
+	let hasDuplicates;
+	do {
+		hasDuplicates = false;
+		temp = [];
+		for(let i = 0; i < gameSet.options_amount - 1; i++) {
+			temp.push(selectRandomCountry(gameSet.range));
+		}
+		
+		// 检查temp内部是否有重复，或与questionCountry重复
+		let allCapitals = [questionCountry.capital];
+			for(let country of temp) {
+				if(allCapitals.includes(country.capital)) {
+					hasDuplicates = true;
+					break;
+				}
+				allCapitals.push(country.capital);
+			}
+	} while(hasDuplicates);
+	
+	answersCountry = answersCountry.concat(temp);
+	answersCountry = shuffleArray(answersCountry);
+	console.log(answersCountry);
+	
+	currentAnswer = questionCountry.country;
+	let char = 'A';
+	
+	examPageTitle.textContent = `which country does ${questionCountry.capital} belong to?`;
+	questions_rma.textContent = `${questionAnswered}/${totalQuestion}`;
+	examPageImage.style.display = 'none';
+	for(let j = 0; j < answersCountry.length; j++) {
+		answersHtmlElements += `
+			<button onclick="submit('${answersCountry[j].country}')">${String.fromCharCode(char.charCodeAt(0) + j)}. ${answersCountry[j].country}</button>
+		`;
+	}
+	currentquestionstr = examPageTitle.textContent;
+	selecta.innerHTML = answersHtmlElements;
+}
+
+
 function startFlagExam() {
 	public_game_set = getSettings();
 	totalQuestion = public_game_set.questions;
@@ -273,7 +332,6 @@ function startFlagExam() {
 	console.log(public_game_set);
 	switchPageTo(exampage);
 	SetNewFlagExamQuestion(public_game_set);
-	
 }
 function SetNewFlagExamQuestion(gameSet) {
 	console.log(gameSet);
@@ -282,10 +340,31 @@ function SetNewFlagExamQuestion(gameSet) {
 	let questionCountry = selectRandomCountry(gameSet.range);
 	let answersCountry = [questionCountry];
 	let answersHtmlElements = "";
-	for(let i = 0; i < gameSet.options_amount - 1; i++) {
-		answersCountry.push(selectRandomCountry(gameSet.range));
-		answersCountry = shuffleArray(answersCountry);
-	}
+	let temp = [];
+	
+	let hasDuplicates;
+	do {
+		hasDuplicates = false;
+		temp = [];
+		for(let i = 0; i < gameSet.options_amount - 1; i++) {
+			temp.push(selectRandomCountry(gameSet.range));
+		}
+		
+		// 检查temp内部是否有重复，或与questionCountry重复
+		let allCapitals = [questionCountry.capital];
+			for(let country of temp) {
+				if(allCapitals.includes(country.capital)) {
+					hasDuplicates = true;
+					break;
+				}
+				allCapitals.push(country.capital);
+			}
+	} while(hasDuplicates);
+	
+	answersCountry = answersCountry.concat(temp);
+	answersCountry = shuffleArray(answersCountry);
+	console.log(answersCountry.length);
+	
 	currentAnswer = questionCountry.country;
 	let char = 'A';
 	
@@ -302,6 +381,7 @@ function SetNewFlagExamQuestion(gameSet) {
 			<button onclick="submit('${answersCountry[j].country}')">${String.fromCharCode(char.charCodeAt(0) + j)}. ${answersCountry[j].country}</button>
 		`;
 	}
+	currentquestionstr = examPageTitle.textContent;
 	selecta.innerHTML = answersHtmlElements;
 }
 
@@ -318,12 +398,34 @@ function setNewCapitalTest(gameSet) {
 	let questionCountry = selectRandomCountry(gameSet.range);
 	let answersCountry = [questionCountry];
 	let answersHtmlElements = "";
-	for(let i = 0; i < gameSet.options_amount - 1; i++) {
-		answersCountry.push(selectRandomCountry(gameSet.range));
-		answersCountry = shuffleArray(answersCountry);
-	}
+	let temp = [];
+	
+	let hasDuplicates;
+	do {
+		hasDuplicates = false;
+		temp = [];
+		for(let i = 0; i < gameSet.options_amount - 1; i++) {
+			temp.push(selectRandomCountry(gameSet.range));
+		}
+		
+		// 检查temp内部是否有重复，或与questionCountry重复
+		let allCapitals = [questionCountry.capital];
+			for(let country of temp) {
+				if(allCapitals.includes(country.capital)) {
+					hasDuplicates = true;
+					break;
+				}
+				allCapitals.push(country.capital);
+			}
+	} while(hasDuplicates);
+	
+	answersCountry = answersCountry.concat(temp);
+	answersCountry = shuffleArray(answersCountry);
+	console.log(answersCountry);
+	
 	currentAnswer = questionCountry.capital;
 	let char = 'A';
+	
 	examPageTitle.textContent = `which city is the capital of ${questionCountry.country}?`;
 	questions_rma.textContent = `${questionAnswered}/${totalQuestion}`;
 	examPageImage.style.display = 'none';
@@ -332,13 +434,15 @@ function setNewCapitalTest(gameSet) {
 			<button onclick="submit('${answersCountry[j].capital}')">${String.fromCharCode(char.charCodeAt(0) + j)}. ${answersCountry[j].capital}</button>
 		`;
 	}
+	currentquestionstr = examPageTitle.textContent;
 	selecta.innerHTML = answersHtmlElements;
 }
 
 function submit(answer) {
 	let statistics_item = {
 		your_answer: answer,
-		correct_answer: currentAnswer
+		correct_answer: currentAnswer,
+		questionStr: currentquestionstr
 	};
 	statistics.push(statistics_item);
 	if(questionAnswered < totalQuestion) {
@@ -349,6 +453,9 @@ function submit(answer) {
 				break;
 			case 'capital': 
 				setNewCapitalTest(public_game_set);
+				break;
+			case 'country':
+				setNewCountryTest(public_game_set);
 				break;
 			default:
 				console.error("what did u do?" + gameType);
@@ -365,9 +472,44 @@ function setResultPage() {
 	for(let i = 0; i < statistics.length; i++){
 		let qwq = statistics[i];
 		(qwq.correct_answer == qwq.your_answer) ? '#08ad00' : '#ec1212';
-		statistics_contents += `<tr style="background-color: ${(qwq.correct_answer == qwq.your_answer) ? '#08ad00' : '#ec1212'}; color: #fff;"><td>${i + 1}</td><td>${qwq.correct_answer}</td><td>${qwq.your_answer}</td></tr>`;
+		statistics_contents += `<tr style="background-color: ${(qwq.correct_answer == qwq.your_answer) ? '#08ad00' : '#ec1212'}; color: #fff;"><td>${qwq.questionStr}</td><td>${qwq.correct_answer}</td><td>${qwq.your_answer}</td></tr>`;
 	}
 	statistics_table.innerHTML = statistics_contents;
+}
+
+function overview() {
+	switchPageTo(resultpg);
+	const ovv = document.getElementById('forOverview');
+	ovv.style.display = 'block';
+	statistics_table.style.display = 'none';
+	let content = "";
+	const load = [
+		{ name: 'asia', data: DATA.asia },
+		{ name: 'africa', data: DATA.africa },
+		{ name: 'america', data: DATA.america },
+		{ name: 'europe', data: DATA.europe },
+		{ name: 'oceania', data: DATA.oceania }
+	];
+	for(let x = 0; x < load.length; x++){
+		content += `
+	<div class="according-item">
+	    <div class="according-title">
+	        ${load[x].name}
+	    </div>
+	    <div class="according-content">
+			<table border="" cellspacing="0" cellpadding="3px" id="statistics_table">
+				<tr><td>country</td><td>flag</td><td>capital</td></tr>
+	`;
+		for(let a = 0; a < load[x].data.length; a++) {
+			content += `<tr><td>${load[x].data[a].country}</td><td><img class="overview-image" src="https://flagcdn.com/w640/${load[x].data[a].countryCode}.png" alt="" /></td><td>${load[x].data[a].capital}</td></tr>`;
+		}
+		content += `
+					</table>
+				</div>
+			</div>
+		`;
+	}
+	ovv.innerHTML = content;
 }
 
 function selectRandomCountry(range) {
