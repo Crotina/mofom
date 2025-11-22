@@ -3,8 +3,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>detail</title>
-    <link rel="stylesheet" href="https://mofom.net/style.css" />
-	<link rel="shortcut icon" href="https://mofom.net/logo_20251021.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../style.css" />
     <style>
 		#detailContainer {
 		    display: flex;
@@ -153,7 +152,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">
-                <a href="https://mofom.net">MOFOM INC</a>
+                <a href="#">MOFOM INC</a>
             </div>
             <ul class="nav-menu">
                 <li class="nav-item">
@@ -280,6 +279,8 @@
 			const description = document.getElementById("description");
 			const discountInfo = document.getElementById("discount");
 			
+			
+			
 			// 加载图片
 			var images = "";
 			for(let i = 0; i < content.imagesUrl.length; i++) {
@@ -296,7 +297,15 @@
 			document.title = content.title;
 			description.textContent = content.description;
 			discountInfo.style.display = (content.discount.isDiscount === 0 ? "none" : "");
-			discountInfo.textContent = `${content.discount.rate}% Off Until ${content.discount.until}`;
+			let discountItem = content.discount;
+			let discountMsg = "DISCOUNT_MESSAGE_ERROR";
+			if(discountItem.discountTitle == undefined || discountItem.discountTitle == '') {
+				discountMsg = `${content.discount.rate}% Off until ${content.discount.until}`;
+			} else {
+				discountMsg = `${discountItem.discountTitle}`;
+			};
+			
+			discountInfo.textContent = `${discountMsg}`;
 		}
 		function changeImage(src) {
 		    document.getElementById('mainImage').src = src;
@@ -306,5 +315,3 @@
 	</script>
 </body>
 </html>
-
-

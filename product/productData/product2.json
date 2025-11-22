@@ -7,6 +7,7 @@
 	"discount":{
 		"isDiscount":1,
 		"rate":35,
-		"until":"30OCT"
+		"until":"30 OCT",
+		"discountTitle": "Celebrate the season with 35% off!"
 	}
 }

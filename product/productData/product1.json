@@ -6,8 +6,9 @@
 		"https://mofom.net/images/1/002.jpeg"
 	],
 	"discount":{
-		"isDiscount":0,
+		"isDiscount":1,
 		"rate":35,
-		"until":"11NOV"
+		"until":"11 NOV",
+		"discountTitle": ""
 	}
 }

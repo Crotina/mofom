@@ -4,9 +4,9 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Product</title>
-	<link rel="stylesheet" href="https://mofom.net/style.css" />
+	<link rel="stylesheet" href="../style.css" />
 	<link rel="stylesheet" href="productList.css" />
-	<link rel="shortcut icon" href="https://mofom.net/logo_20251021.ico" type="image/x-icon" />
+
 </head>
 <body>
 	<nav class="navbar">
@@ -145,10 +145,19 @@
 		        let isDiscount = result[i].discount.isDiscount;
 		        let discountRate = result[i].discount.rate;
 		        let discountUntil = result[i].discount.until;
+				let discountTitle = result[i].discount.discountTitle;
+				
+				let discountMsg = "DISCOUNT MESSAGE ERROR";
+				
+				if(discountTitle == undefined || discountTitle == '') {
+					discountMsg = `${discountRate}% Off until ${discountUntil}`;
+				} else {
+					discountMsg = `${discountTitle}`;
+				}
 		
 		        content += `
 		            <div class="list-item"  onclick="goToDetailPage(${i})">
-		              <div class="discount-badge ${(isDiscount == 0 ? "hidden" : "")}">${discountRate}% Off until ${discountUntil}</div>
+		              <div class="discount-badge ${(isDiscount == 0 ? "hidden" : "")}">${discountMsg}</div>
 		              <div class="image-count-badge ${(imagesRemain === 0 ? "hidden" : "")}">+${imagesRemain}</div>
 		              <img src="${displayImageUrl}" alt="" />
 		              <div class="list-item-description">
@@ -165,5 +174,4 @@
 </body>
 
 </html>
-
 
