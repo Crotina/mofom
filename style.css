@@ -64,7 +64,7 @@ body {
     color: #333;
     text-decoration: none;
     font-weight: 500;
-    font-size: 1.5rem; /* 增大字体 */
+    font-size: 1.1rem; /* 增大字体 */
     transition: color 0.3s;
 }
 
@@ -152,7 +152,7 @@ body {
 
 /* 特点区域样式 */
 .features {
-    padding: 6rem 0; /* 从5rem增加到6rem */
+    padding: 2rem 0; /* 从5rem增加到6rem */
     background-color: #fff;
 }
 
@@ -196,6 +196,9 @@ body {
     font-size: 1.6rem; /* 从1.3rem增加到1.6rem */
     margin-bottom: 1rem;
     color: #1e293b;
+}
+.feature-card h3:hover {
+	color: #1d4ed8;
 }
 
 .feature-card p {
@@ -324,4 +327,3 @@ body {
 .hide {
     display: none !important;
 }
-
