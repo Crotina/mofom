@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>product release page</title>
+		<style>
+			.title {
+				margin: 20px 0;
+			}
+			#newVer:before {
+				content: "latest";
+				font-size: 20px;
+			}
+			#historyversion:before {
+				content: "history version";
+				font-size: 20px;
+			}
+			.versionpart {
+				padding: 10px;
+				border: #5af 1px solid;
+				
+				margin-bottom: 10px;
+			}
+			.selection_item {
+				padding: 5px;
+				border: 1px solid #5af;
+				margin-bottom: 20px;s
+			}
+			/* .selection_item .selection_version:before {
+				content: "version: ";
+			} */
+			.selection_item .selection_whatsnew {
+				
+			}
+			h1, h2, h3 {
+				line-height: 1.1rem;
+				margin: 0px;
+			}
+		</style>
+	</head>
+	<body>
+		<h1 class="title">product release page</h1>
+		<hr />
+		<div id="newVer" class="versionpart">
+			<div class="selection_item">
+				<h3 class="selection_version">version: v3.3.0</h3>
+				<p class="selection_whatsnew">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fuga omnis beatae nulla vitae officia distinctio alias quod blanditiis quam iste dicta perferendis, voluptatibus obcaecati, explicabo veritatis error deserunt perspiciatis velit!</p>
+				<a href="">download</a>
+				
+			</div>
+		</div>
+		<div id="historyversion" class="versionpart">
+			<div class="selection_item">
+				<h3 class="selection_version">version: v3.3.0</h3>
+				<p class="selection_whatsnew">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fuga omnis beatae nulla vitae officia distinctio alias quod blanditiis quam iste dicta perferendis, voluptatibus obcaecati, explicabo veritatis error deserunt perspiciatis velit!</p>
+				<a href="">download</a>
+				
+			</div>
+			<div class="selection_item">
+				<h3 class="selection_version">version: v3.3.0</h3>
+				<p class="selection_whatsnew">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fuga omnis beatae nulla vitae officia distinctio alias quod blanditiis quam iste dicta perferendis, voluptatibus obcaecati, explicabo veritatis error deserunt perspiciatis velit!</p>
+				<a href="">download</a>
+				
+			</div>
+		</div>
+		<script>
+			async function loadSequentialData() {
+			    const baseUrl = './productData';
+			    const result = [];
+			
+			    try {
+			        // 第一步：加载 main.json 获取文件列表
+			        const mainResponse = await fetch(`${baseUrl}/main.json`);
+			        if (!mainResponse.ok) {
+			            throw new Error(`无法加载 main.json: HTTP ${mainResponse.status}`);
+			        }
+			
+			        const mainData = await mainResponse.json();
+			        const fileList = mainData.files || [];
+			
+			        if (fileList.length === 0) {
+			            throw new Error('main.json 中没有文件列表');
+			        }
+			
+			        console.log(`main.json 中列出 ${fileList.length} 个文件:`, fileList);
+			
+			        // 第二步：使用 for 循环逐个加载文件
+			        for (const filename of fileList) {
+			            try {
+			                console.log(`正在加载文件: ${filename}`);
+			                const response = await fetch(`${baseUrl}/${filename}`);
+			                if (!response.ok) {
+			                    throw new Error(`加载失败: ${filename}, HTTP ${response.status}`);
+			                }
+			
+			                const data = await response.json();
+			                result.push(data);
+			                console.log(`成功加载: ${filename}`);
+			            } catch (fileError) {
+			                console.warn(`跳过文件 ${filename}，原因:`, fileError);
+			            }
+			        }
+			
+			        // 第三步：返回加载好的对象数组
+			        console.log(`共加载成功 ${result.length} 个文件, 类型${typeof result}`);
+			        return result;
+			
+			    } catch (error) {
+			        console.error('加载数据失败:', error);
+			        return [];
+			    }
+			}
+			
+			async function load() {
+				const history_version = document.getElementById('historyversion');
+				const latest_verison = document.getElementById('newVer');
+				
+				var data = await loadSequentialData();
+				data = sortData(data);
+				
+				let latest_ver_data = data[0];
+				//load latest version
+				var latest_stru = `
+					<div class="selection_item">
+						<h3 class="selection_version">version: ${latest_ver_data.versionInfo}</h3>
+						<p class="selection_whatsnew">${latest_ver_data.whatsNew}</p>
+						<a href="${latest_ver_data.fileURL}">download ${latest_ver_data.versionInfo}</a>
+						
+					</div>
+				`;
+				var history_ver_stru = '';
+				
+				// load history version
+				for(let i = 0; i < data.length; i++) {
+					let tgt = data[i];
+					history_ver_stru += `
+						<div class="selection_item">
+						<h3 class="selection_version">version: ${tgt.versionInfo}</h3>
+						<p class="selection_whatsnew">${tgt.whatsNew}</p>
+						<a href="${tgt.fileURL}">download ${tgt.versionInfo}</a>
+						
+					</div>
+					`;
+					
+				}
+				history_version.innerHTML = history_ver_stru;
+				latest_verison.innerHTML = latest_stru;
+			}
+			
+			function sortData(arr) {
+				return arr.sort((a, b) => b.versionInfoNumber - a.versionInfoNumber);
+			}
+			load();
+		</script>
+	</body>
+</html>

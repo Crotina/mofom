@@ -1,0 +1,6 @@
+{
+	"versionInfo": "v3.3.0",
+	"versionInfoNumber": 330,
+	"whatsNew": "made the website better, uses UDP broadcast and UDP broadcast listening to find LAN devices, that means you can't find the device that using file quick share version under v3.3.0 (software under v2.3.0 don't do UDP broadcast), but you still can find LAN devices using v3.3.0 with v2.3.0 software",
+	"fileURL": "./productFile/filequickshare_v3.3_setup.exe"
+}
