@@ -1,0 +1,6 @@
+{
+	"versionInfo": "v3.4.0",
+	"versionInfoNumber": 340,
+	"whatsNew": "add language option, now users can switch languages, and users also can make custom language config file (.json) if your language is not support",
+	"fileURL": "./productFile/filequickshare_v3.4_setup.exe"
+}
