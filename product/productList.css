@@ -20,7 +20,7 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   border: 1px solid #eaeaea;
   transition: all 0.3s ease;
-  max-width: 400px;
+  max-width: 520px;
 }
 
 .list-item:hover {
@@ -30,7 +30,7 @@
 .list-item img {
   width: 100%;
   cursor: pointer;
-  height: 200px;
+  height: 270px;
   object-fit: cover;
   display: block;
 }
@@ -44,7 +44,7 @@
   color: white;
   padding: 4px 8px;
   border-radius: 2px;
-  font-size: 0.8em;
+  font-size: 1.25em;
   font-weight: 600;
 }
 
@@ -55,7 +55,7 @@
 
 .list-item-description h1 {
   margin: 0 0 8px 0;
-  font-size: 1.1em;
+  font-size: 1.8em;
   color: #333;
   font-weight: 600;
 }
@@ -63,7 +63,7 @@
 .list-item-description p {
   margin: 0 0 12px 0;
   color: #666;
-  font-size: 0.9em;
+  font-size: 1.2em;
   line-height: 1.4;
 }
 
@@ -76,7 +76,7 @@
   color: white;
   padding: 4px 8px;
   border-radius: 2px;
-  font-size: 0.8em;
+  font-size: 1.25em;
   font-weight: 600;
   /* opacity: 0; */
   /* transform: translateY(-10px); */

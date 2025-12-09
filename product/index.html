@@ -37,8 +37,6 @@
 	</nav>
 	
 	<h1 style="margin-left: 20px;">What do you want?</h1>
-	<!-- product list -->
-	<!-- 修改后的list-item结构 -->
 	<div id="list-container">
 		
 	</div>
@@ -72,7 +70,7 @@
 	<script>
 		function goToDetailPage(itemId) {
 		    if (typeof itemId !== 'number') {
-		        console.error('参数必须是整数');
+		        console.error('it must be a number');
 		        return;
 		    }
 		
@@ -91,41 +89,36 @@
 		        // 第一步：加载 main.json 获取文件列表
 		        const mainResponse = await fetch(`${baseUrl}/main.json`);
 		        if (!mainResponse.ok) {
-		            throw new Error(`无法加载 main.json: HTTP ${mainResponse.status}`);
+		            throw new Error(`cannot load main.json: HTTP ${mainResponse.status}`);
 		        }
 		
 		        const mainData = await mainResponse.json();
 		        const fileList = mainData.files || [];
 		
 		        if (fileList.length === 0) {
-		            throw new Error('main.json 中没有文件列表');
+		            throw new Error('main.json does not have a list in it');
 		        }
 		
-		        console.log(`main.json 中列出 ${fileList.length} 个文件:`, fileList);
+		        console.log(`${fileList.length} files in list`, fileList);
 		
-		        // 第二步：使用 for 循环逐个加载文件
 		        for (const filename of fileList) {
 		            try {
-		                console.log(`正在加载文件: ${filename}`);
 		                const response = await fetch(`${baseUrl}/${filename}`);
 		                if (!response.ok) {
-		                    throw new Error(`加载失败: ${filename}, HTTP ${response.status}`);
+		                    throw new Error(`load failed: ${filename}, HTTP ${response.status}`);
 		                }
 		
 		                const data = await response.json();
 		                result.push(data);
-		                console.log(`成功加载: ${filename}`);
+		                // console.log(`成功加载: ${filename}`);
 		            } catch (fileError) {
-		                console.warn(`跳过文件 ${filename}，原因:`, fileError);
+		                console.warn(`skip ${filename}:`, fileError);
 		            }
 		        }
-		
-		        // 第三步：返回加载好的对象数组
-		        console.log(`共加载成功 ${result.length} 个文件, 类型${typeof result}`);
 		        return result;
 		
 		    } catch (error) {
-		        console.error('加载数据失败:', error);
+		        console.error(error);
 		        return [];
 		    }
 		}
