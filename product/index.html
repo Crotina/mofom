@@ -6,7 +6,7 @@
 	<title>Product</title>
 	<link rel="stylesheet" href="../style.css" />
 	<link rel="stylesheet" href="productList.css" />
-
+	<link rel="shortcut icon" href="https://mofom.net/logo_20251021.ico" type="image/x-icon" />
 </head>
 <body>
 	<nav class="navbar">
@@ -74,19 +74,17 @@
 		        return;
 		    }
 		
-		    // 构造跳转 URL，传递参数 itemId
 		    const targetUrl = `detail.html?id=${itemId}`;
 		
 		    // 执行跳转
 		    window.location.href = targetUrl;
 		}
-		// 按顺序加载 ./main.json 中列出的文件，并返回对象数组
+		
 		async function loadSequentialData() {
 		    const baseUrl = './productData';
 		    const result = [];
 		
 		    try {
-		        // 第一步：加载 main.json 获取文件列表
 		        const mainResponse = await fetch(`${baseUrl}/main.json`);
 		        if (!mainResponse.ok) {
 		            throw new Error(`cannot load main.json: HTTP ${mainResponse.status}`);
@@ -110,7 +108,6 @@
 		
 		                const data = await response.json();
 		                result.push(data);
-		                // console.log(`成功加载: ${filename}`);
 		            } catch (fileError) {
 		                console.warn(`skip ${filename}:`, fileError);
 		            }
@@ -131,16 +128,18 @@
 		
 		    let content = "";
 		    for (let i = 0; i < result.length; i++) {
-		        let title = result[i].title;
-		        let description = result[i].description;
-		        let displayImageUrl = result[i].imagesUrl[0];
-		        let imagesRemain = result[i].imagesUrl.length - 1;
-		        let isDiscount = result[i].discount.isDiscount;
-		        let discountRate = result[i].discount.rate;
-		        let discountUntil = result[i].discount.until;
-				let discountTitle = result[i].discount.discountTitle;
+				let contentFile = result[i];
 				
-				let discountMsg = "DISCOUNT MESSAGE ERROR";
+		        let title = contentFile.title;
+		        let description = contentFile.description;
+		        let displayImageUrl = contentFile.imagesUrl[0] == undefined ? "https://mofom.net/images/default/defaultText_sorry_no_image.png" : contentFile.imagesUrl[0];
+		        let imagesRemain = contentFile.imagesUrl.length - 1;
+		        let isDiscount = contentFile.discount.isDiscount;
+		        let discountRate = contentFile.discount.rate;
+		        let discountUntil = contentFile.discount.until;
+				let discountTitle = contentFile.discount.discountTitle;
+				
+				let discountMsg = "no discount haha";
 				
 				if(discountTitle == undefined || discountTitle == '') {
 					discountMsg = `${discountRate}% Off until ${discountUntil}`;

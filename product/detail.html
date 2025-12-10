@@ -4,6 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>detail</title>
     <link rel="stylesheet" href="https://mofom.net/style.css" />
+	<link rel="shortcut icon" href="https://mofom.net/logo_20251021.ico" type="image/x-icon" />
     <style>
 		#detailContainer {
 		    display: flex;
@@ -161,7 +162,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">
-                <a href="#">MOFOM INC</a>
+                <a href="https://mofom.net">MOFOM INC</a>
             </div>
             <ul class="nav-menu">
                 <li class="nav-item">
@@ -235,13 +236,12 @@
 		    const baseUrl = './productData';
 		    let fileList = [];
 			
-			if(itemId == NaN) {
-				console.warn("itemId没有设置！")
+			if(isNaN(itemId)) {
+				console.warn("no itemId")
 				return null;
 			}
 		
 		    try {
-		        // 1. 加载 main.json 获取文件列表
 		        const mainResponse = await fetch(`${baseUrl}/main.json`);
 		        if (!mainResponse.ok) {
 		            throw new Error(`connot load main.json: HTTP ${mainResponse.status}`);
@@ -254,7 +254,6 @@
 		            throw new Error('main.json does not have a list in it');
 		        }
 		
-		        // 2. 根据 itemId 获取对应文件名
 		        if (itemId < 0 || itemId >= fileList.length) {
 		            throw new Error(`itemId too large: ${itemId}`);
 		        }
@@ -262,7 +261,6 @@
 		        const targetFile = fileList[itemId];
 		        console.log(`it gonna load: ${targetFile}`);
 		
-		        // 3. 加载对应的 JSON 文件
 		        const fileResponse = await fetch(`${baseUrl}/${targetFile}`);
 		        if (!fileResponse.ok) {
 		            throw new Error(`cannot load ${targetFile}: HTTP ${fileResponse.status}`);
@@ -270,12 +268,11 @@
 		
 		        const fileData = await fileResponse.json();
 		
-		        // 4. 返回文件内容
 		        return fileData;
 		
 		    } catch (error) {
 		        console.error('failed, in a word your data is missing:', error);
-				errinfo = error;
+				errinfo = error.message;
 		        return null;
 		    }
 		}
@@ -305,6 +302,11 @@
 			
 			// 加载图片
 			var images = "";
+			
+			if(content.imagesUrl[0] == undefined) {
+				content.imagesUrl[0] = "https://mofom.net/images/default/defaultText_sorry_no_image.png";
+				console.log(content);
+			}
 			for(let i = 0; i < content.imagesUrl.length; i++) {
 				images += `
 					<img src="${content.imagesUrl[i]}" onclick="changeImage(this.src)">
@@ -333,7 +335,7 @@
 		    document.getElementById('mainImage').src = src;
 		}
 
-		document.addEventListener("DOMContentLoaded", renderData())
+		document.addEventListener("DOMContentLoaded", renderData);
 	</script>
 </body>
 </html>
