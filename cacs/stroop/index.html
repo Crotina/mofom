@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stroop Test</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        .introduction {
+            display: flex;
+            flex-direction: column;
+            font-size: 18px;
+            margin-bottom: 20px;
+            background-color: #f6f593;
+            /* color: #535105; */
+            padding: 15px;
+            border: 3px dotted #cedd00;
+            border-radius: 20px;
+            align-items: center;
+            max-width: 80vw;
+        }
+        .color_list {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+        #color_list_list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 10px;
+            width: 100%;
+        }
+
+        .color_item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 20px;
+            border: 5px none #8753ff;
+            
+            cursor: pointer;
+        }
+        .color_item span {
+            font-size: 40px;
+        }
+        .color_box {
+            width: 65px;
+            height: 65px;
+            border: 1px solid #ccc;
+        }
+        .test_title {
+            margin-bottom: 15px;
+        }
+        .question_show {
+    font-size: 65px;
+    margin-bottom: 20px;
+    padding: 40px;
+    background-color: #222222;
+}
+        .options button {
+            padding: 10px 20px;
+            margin-right: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #home , #test_y_o_n, #test_determine_color, #end {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+        #home {
+            flex-direction: column;
+
+        }
+        #startButton {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .test_setting {
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div id="home" class="qwq">
+        <h1>Welcome to the Stroop Test</h1>
+
+        
+
+        <div class="introduction">
+            This test give you a word of colors, you need to determine that is the color of the word are the same with what the word mean. Select the colors you want to test below by clicking on them (dotted border means the color is selected). Then click "Start Test" to begin.
+            <div class="color_list">
+                <h3>color set</h3>
+                <div id="color_list_list">
+                    <div class="color_item" >
+                        <div class="color_box" style="background-color: red;"></div>
+                        <span>Red</span>
+                    </div>
+
+                </div>
+                <h3 id="now_avalible_list">
+                 
+                </h3>
+            </div>
+        </div>
+
+        <div class="test_setting">
+            <label for="amount">Number of Questions:</label>
+            <select name="amount" id="question_amount">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="9999">a lot</option>
+            </select>
+            <br>
+            <br>
+            <label for="test_type">Test Type:</label>
+            <select name="test_type" id="test_type">
+                <option value="y_o_n">answer yes or no</option>
+                <option value="determine_color">determine the Color</option>
+            </select>
+        </div>
+        
+        <button id="startButton" onclick="main_start()">Start Test</button>
+    </div>
+
+    <div id="test_y_o_n" class="qwq">
+        <h1 class="test_title">are they match?</h1>
+        <p class="question_remains_display" id="y_o_n_question_remains_display"></p>
+
+        <div class="question_show" id="y_o_n_question">
+
+        </div>
+
+        <div class="options" id="y_o_n_option">
+            <button id="yesButton">Yes</button>
+            <button id="noButton">No</button>
+        </div>
+    </div>
+
+    <div id="test_determine_color" class="qwq">
+        <h1 class="test_title">color of the word?</h1>
+        <p class="question_remains_display" id="determine_color_question_remains_display"></p>
+
+        <div class="question_show" id="determine_color_question">
+
+        </div>
+
+        <div class="options" id="determine_color_option">
+
+        </div>
+    </div>
+
+    <div id="end" class="qwq">
+
+    </div>
+    <script>
+        const all_pages = document.getElementsByClassName('qwq');
+
+        const home_page = document.getElementById('home');
+        const test_y_o_n_page = document.getElementById('test_y_o_n');
+        const test_determine_color_page = document.getElementById('test_determine_color');
+        const end_page = document.getElementById('end');
+
+        const y_o_n_option = document.getElementById('y_o_n_option');
+        const determine_color_option = document.getElementById('determine_color_option');
+
+        const startButton = document.getElementById('startButton');
+
+        const question_amount = document.getElementById('question_amount');
+
+        var color_set = [
+            {name: 'Red',    color_code: '#ea2424', avalible: true},   // 柔和红
+            {name: 'Green',  color_code: '#28902d', avalible: true},   // 柔和绿
+            {name: 'Blue',   color_code: '#64B5F6', avalible: true},   // 柔和蓝
+            {name: 'Yellow', color_code: '#ffea2f', avalible: false},  // 柔和黄
+            {name: 'Purple', color_code: '#BA68C8', avalible: false},  // 柔和紫
+            {name: 'Orange', color_code: '#FFB74D', avalible: false}   // 柔和橙
+        ];
+
+        var avaliable_colors = color_set.filter(color => color.avalible);
+
+        var testInfo = {
+            questions:{
+                total: 0,
+                question_arr: [],
+                questions_array_index: 0,
+
+                current_color: null,
+                prev_color: null
+            },
+            statistics:{
+                result: [],
+            },
+            current_correct_answer: null,
+            type: '' // 'y_o_n' or 'determine_color'
+        };
+        /*
+        * Switches the current page to the specified one.
+        * @param {object} page - The ID of the page to switch to.
+        */
+        function switch_page_to(page) {
+            Array.from(all_pages).forEach(p => {
+                p.style.display = 'none';
+            });
+            page.style.display = 'flex';
+        }
+        function random_number(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        function random01Array(n) {
+            const arr = [];
+            for (let i = 0; i < n; i++) {
+                arr.push(Math.random() < 0.5 ? 0 : 1);
+            }
+            return arr;
+        }
+
+        // 传入一个颜色，如果是可用的就改为不可用，不可用的就改为可用，随后重新渲染颜色列表
+        function change_color_avalibility(color_name) {
+            for (let i = 0; i < color_set.length; i++) {
+                if (color_set[i].name === color_name) {
+                    color_set[i].avalible = !color_set[i].avalible;
+                    break;
+                }
+            }
+            avaliable_colors = color_set.filter(color => color.avalible);
+            render_color_list();
+        }
+
+        function render_color_list() {
+            const color_list = document.getElementById('color_list_list');
+            const now_avalible_list = document.getElementById('now_avalible_list');
+
+            var content = '';
+            for (let i = 0; i < color_set.length; i++) {
+                let color = color_set[i];
+                content += `
+                    <div class="color_item" ${color.avalible ? 'style="border-style: dotted;"' : ''} onclick="change_color_avalibility('${color.name}')">
+                        <div class="color_box" style="background-color: ${color.color_code};"></div>
+                        <span>${color.name}</span>
+                    </div>
+                `;
+            }
+            color_list.innerHTML = content;
+            now_avalible_list.innerText = 'Now Avalible Colors: ' + color_set.filter(color => color.avalible).map(color => color.name).join(', ');
+        }
+
+        function main_start() {
+            const selected_test_type = document.getElementById('test_type').value;
+            if (avaliable_colors.length < 2) {
+                alert('Please select at least two colors for the test.');
+                return;
+            }
+            switch (selected_test_type) {
+                case 'y_o_n':
+                    start_y_o_n_test();
+                    break;
+                case 'determine_color':
+                    start_determine_color_test();
+                    break;
+                default:
+                    console.error('Unknown test type selected:', selected_test_type);
+                    break;
+            }
+        }
+
+        function start_y_o_n_test() {
+            switch_page_to(test_y_o_n_page);
+            testInfo.type = 'y_o_n';
+            testInfo.questions.total = parseInt(question_amount.value);
+            testInfo.questions.question_arr = random01Array(testInfo.questions.total);
+            setup_question();
+        }
+
+        function start_determine_color_test() {
+            switch_page_to(test_determine_color_page);
+            testInfo.type = 'determine_color';
+            testInfo.questions.total = parseInt(question_amount.value);
+            testInfo.questions.question_arr = random01Array(testInfo.questions.total);
+            setup_question();
+        }
+
+        function pick_color(same_color) {
+            const prev = testInfo.questions.prev_color;
+
+            function isPrev(c) {
+                if (!prev) return false;
+                if (typeof prev === 'string') return prev === c.color_code;
+                if (typeof prev === 'object') return (prev.name === c.name) || (prev.color_code === c.color_code);
+                return false;
+            }
+
+            if (same_color) {
+                let color;
+                // pick a color that's not the same as previous
+                do {
+                    const idx = random_number(0, avaliable_colors.length - 1);
+                    color = avaliable_colors[idx];
+                } while (isPrev(color));
+
+                return { name: color.name, color_code: color.color_code };
+            } else {
+                let c1, c2;
+                // c1 provides the color_code, c2 provides the name (they must be different)
+                do {
+                    c1 = avaliable_colors[random_number(0, avaliable_colors.length - 1)];
+                    c2 = avaliable_colors[random_number(0, avaliable_colors.length - 1)];
+                } while (c1 === c2 || isPrev(c2));
+
+                return { name: c2.name, color_code: c1.color_code };
+            }
+        }
+
+        function setup_question() {
+            let question_arr = testInfo.questions.question_arr;
+            let question_index = testInfo.questions.questions_array_index;
+
+            console.log(testInfo.type);
+            switch (testInfo.type) {
+                
+                case 'y_o_n':
+                    // 这个数组包含这一次测试中所有题目的对错情况，1代表正确，0代表错误
+                    
+                    if(question_arr[question_index] === 1){
+                        // 正确 - 名称与颜色一致
+                        const result = pick_color(true);
+                        testInfo.current_color = result;
+                        testInfo.current_correct_answer = 'yes';
+                        document.getElementById('y_o_n_question').innerHTML = `<span style="color: ${result.color_code};">${result.name}</span>`;
+                    } else {
+                        // 错误 - 名称与颜色不一致
+                        const result = pick_color(false);
+                        testInfo.current_correct_answer = 'no';
+                        testInfo.current_color = result;
+                        document.getElementById('y_o_n_question').innerHTML = `<span style="color: ${result.color_code};">${result.name}</span>`;
+                    }
+
+                    // 渲染选项按钮
+                    document.getElementById('y_o_n_option').innerHTML = `
+                        <button id="yesButton" onclick="submit_answer('yes')">Yes</button>
+                        <button id="noButton" onclick="submit_answer('no')">No</button>
+                    `;
+                    // 更新剩余问题显示
+                    document.getElementById('y_o_n_question_remains_display').innerText = `Question ${question_index + 1} / ${testInfo.questions.total}`;
+                    break;
+
+                case 'determine_color':
+                    if(question_arr[question_index] === 1){
+                        // 正确 - 名称与颜色一致
+                        const result = pick_color(true);
+                        testInfo.current_correct_answer = result.name;
+                        testInfo.current_color = result;
+                        document.getElementById('determine_color_question').innerHTML = `<span style="color: ${result.color_code};">${result.name}</span>`;
+                    } else {
+                        // 错误 - 名称与颜色不一致
+                        const result = pick_color(false);
+                        // 找到与 color_code 对应的颜色名称，作为正确答案
+                        const correctColor = avaliable_colors.find(c => c.color_code === result.color_code);
+                        testInfo.current_correct_answer = correctColor ? correctColor.name : null;
+                        testInfo.current_color = result;
+
+                        document.getElementById('determine_color_question').innerHTML = `<span style="color: ${result.color_code};">${result.name}</span>`;
+                    }
+                    // 渲染选项按钮
+                    let options_content = '';
+                    for (let i = 0; i < avaliable_colors.length; i++) {
+                        let color = avaliable_colors[i];
+                        options_content += `<button onclick="submit_answer('${color.name}')">${color.name}</button>`;
+                    }
+                    document.getElementById('determine_color_option').innerHTML = options_content;
+                    document.getElementById('determine_color_question_remains_display').innerText = `Question ${question_index + 1} / ${testInfo.questions.total}`;
+                    break;
+                    
+                default:
+                    console.error('Unknown question type:', testInfo.type);
+                    break;
+            }
+        }
+
+        function submit_answer(answer) {
+            if (answer === testInfo.current_correct_answer) {
+                testInfo.statistics.result.push(1); // Correct
+            } else {
+                testInfo.statistics.result.push(0); // Incorrect
+            }
+
+            testInfo.questions.questions_array_index++;
+
+            if (testInfo.questions.questions_array_index < testInfo.questions.total) {
+                setup_question(testInfo.type);
+                testInfo.questions.prev_color = testInfo.questions.current_color;
+                testInfo.questions.current_color = null;
+            } else {
+                end_test();
+            }
+        }
+
+        function end_test() {
+            switch_page_to(end_page);
+            let correct_answers = testInfo.statistics.result.reduce((a, b) => a + b, 0);
+            end_page.innerHTML = `
+                <h1>Test Over</h1>
+                <p>Your Score: ${correct_answers} out of ${testInfo.questions.total}</p>
+                <button onclick="init()">back home</button>
+            `;
+        }
+
+        function init(){
+            switch_page_to(home_page);
+            render_color_list();
+            testInfo = {
+                questions:{
+                    total: 0,
+                    question_arr: [],
+                    questions_array_index: 0
+                },
+                statistics:{
+                    result: [],
+                },
+                current_correct_answer: null,
+                type: ''
+            };
+        }
+
+        init();
+    </script>
+</body>
+</html>
