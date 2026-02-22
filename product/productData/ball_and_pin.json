@@ -2,7 +2,7 @@
 	"title":"ball and bin",
 	"description":"ball and pin",
 	"imagesUrl":[
-		"https://mofom.net/ball_and_pin/ball_and_pin.jpg"
+		"https://mofom.net/images/ball_and_pin/ball_and_pin.jpg"
 	],
 	"discount":{
 		"isDiscount":0,
@@ -10,4 +10,5 @@
 		"until":"11 NOV",
 		"discountTitle": ""
 	}
+
 }
