@@ -1,0 +1,13 @@
+{
+	"title":"ball and bin",
+	"description":"ball and pin",
+	"imagesUrl":[
+		"https://mofom.net/ball_and_pin/ball_and_pin.jpg"
+	],
+	"discount":{
+		"isDiscount":0,
+		"rate":35,
+		"until":"11 NOV",
+		"discountTitle": ""
+	}
+}

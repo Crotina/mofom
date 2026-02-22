@@ -1,0 +1,13 @@
+{
+	"title":"Big Hook Plate",
+	"description":"big hook plate",
+	"imagesUrl":[
+		"https://mofom.net/big_hook_plate/big_hook_plate.jpg"
+	],
+	"discount":{
+		"isDiscount":0,
+		"rate":35,
+		"until":"11 NOV",
+		"discountTitle": ""
+	}
+}
