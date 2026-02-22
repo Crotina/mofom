@@ -19,8 +19,11 @@
 	                <a href="../index.html" class="nav-link">Home</a>
 	            </li>
 	            <li class="nav-item">
-	                <a href="#" class="nav-link active">Product</a>
-	            </li>
+                    <a href="./index.html?category=product" class="nav-link" id="prd">Product</a>
+                </li>
+                <li class="nav-item">
+                    <a href="./index.html?category=acc" class="nav-link" id="acc">Accessories</a>
+                </li>
 	            <li class="nav-item">
 	                <a href="../help.html" class="nav-link">Help</a>
 	            </li>
@@ -36,9 +39,9 @@
 	    </div>
 	</nav>
 	
-	<h1 style="margin-left: 20px;">What do you want?</h1>
+	<h1 style="margin-left: 20px;" id="category_title"></h1>
 	<div id="list-container">
-		
+			
 	</div>
 	<footer class="footer">
 	    <div class="container">
@@ -67,61 +70,28 @@
 	</footer>
 
 	<script src="../script.js"></script>
-	<script>
-		function goToDetailPage(itemId) {
-		    if (typeof itemId !== 'number') {
-		        console.error('it must be a number');
-		        return;
-		    }
+	<script type="module">
 		
-		    const targetUrl = `detail.html?id=${itemId}`;
+		import { loadSequentialData, urlParams, goToDetailPage } from './public.js';
+
 		
-		    // 执行跳转
-		    window.location.href = targetUrl;
+
+		const category = urlParams.get('category');
+		const cat_tit = document.getElementById('category_title');
+
+		if(category === 'acc') {
+			cat_tit.textContent = "Accessories";
+			document.getElementById('acc').classList.add('active');
+		} else if(category === 'product') {
+			cat_tit.textContent = "Product";
+			document.getElementById('prd').classList.add('active');
+		} else {
+			cat_tit.textContent = category;
 		}
 		
-		async function loadSequentialData() {
-		    const baseUrl = './productData';
-		    const result = [];
-		
-		    try {
-		        const mainResponse = await fetch(`${baseUrl}/main.json`);
-		        if (!mainResponse.ok) {
-		            throw new Error(`cannot load main.json: HTTP ${mainResponse.status}`);
-		        }
-		
-		        const mainData = await mainResponse.json();
-		        const fileList = mainData.files || [];
-		
-		        if (fileList.length === 0) {
-		            throw new Error('main.json does not have a list in it');
-		        }
-		
-		        console.log(`${fileList.length} files in list`, fileList);
-		
-		        for (const filename of fileList) {
-		            try {
-		                const response = await fetch(`${baseUrl}/${filename}`);
-		                if (!response.ok) {
-		                    throw new Error(`load failed: ${filename}, HTTP ${response.status}`);
-		                }
-		
-		                const data = await response.json();
-		                result.push(data);
-		            } catch (fileError) {
-		                console.warn(`skip ${filename}:`, fileError);
-		            }
-		        }
-		        return result;
-		
-		    } catch (error) {
-		        console.error(error);
-		        return [];
-		    }
-		}
 		async function render_data_to_screen() {
 		    const productlist = document.getElementById("list-container");
-		    const result = await loadSequentialData();
+		    const result = await loadSequentialData(category);
 		
 		    // document.getElementById("result").textContent = JSON.stringify(result, null, 2);
 		    console.log(result);
@@ -148,7 +118,7 @@
 				}
 		
 		        content += `
-		            <div class="list-item"  onclick="goToDetailPage(${i})">
+		            <div class="list-item"  onclick="goToDetailPage(\'${category}\', ${i})">
 		              <div class="discount-badge ${(isDiscount == 0 ? "hidden" : "")}">${discountMsg}</div>
 		              <div class="image-count-badge ${(imagesRemain === 0 ? "hidden" : "")}">+${imagesRemain}</div>
 		              <img src="${displayImageUrl}" alt="" />

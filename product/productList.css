@@ -20,7 +20,6 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   border: 1px solid #eaeaea;
   transition: all 0.3s ease;
-  max-width: 520px;
 }
 
 .list-item:hover {
@@ -30,8 +29,9 @@
 .list-item img {
   width: 100%;
   cursor: pointer;
-  height: 270px;
-  object-fit: cover;
+  max-height: 270px;
+  aspect-ratio: 16 /9;
+  object-fit: contain;
   display: block;
 }
 

@@ -125,7 +125,6 @@
 		    }
 		}
 		
-		/* 针对小屏幕手机的额外优化 */
 		@media screen and (max-width: 480px) {
 		    #detailContainer {
 		        margin: 10px auto;
@@ -169,7 +168,10 @@
                     <a href="../index.html" class="nav-link">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a href="index.html" class="nav-link active">Product</a>
+                    <a href="./index.html?category=product" class="nav-link">Product</a>
+                </li>
+                <li class="nav-item">
+                    <a href="./index.html?category=acc" class="nav-link">Accessories</a>
                 </li>
                 <li class="nav-item">
                     <a href="../help.html" class="nav-link">Help</a>
@@ -226,58 +228,16 @@
 	    </div>
 	</footer>
     <script src="../script.js"></script>
-    <script>
-		const urlParams = new URLSearchParams(window.location.search);
+    <script type="module">
+		import {urlParams, loadItemData} from "./public.js"
 		
-		let itemId = parseInt(urlParams.get('id'), 10);
+		let itemId = parseInt(urlParams.get('id'));
+		let itemCategory = urlParams.get('category');
 		let errinfo = '';
 		
-		async function loadData(itemId) {
-		    const baseUrl = './productData';
-		    let fileList = [];
-			
-			if(isNaN(itemId)) {
-				console.warn("no itemId")
-				return null;
-			}
 		
-		    try {
-		        const mainResponse = await fetch(`${baseUrl}/main.json`);
-		        if (!mainResponse.ok) {
-		            throw new Error(`connot load main.json: HTTP ${mainResponse.status}`);
-		        }
-		
-		        const mainData = await mainResponse.json();
-		        fileList = mainData.files || [];
-		
-		        if (fileList.length === 0) {
-		            throw new Error('main.json does not have a list in it');
-		        }
-		
-		        if (itemId < 0 || itemId >= fileList.length) {
-		            throw new Error(`itemId too large: ${itemId}`);
-		        }
-		
-		        const targetFile = fileList[itemId];
-		        console.log(`it gonna load: ${targetFile}`);
-		
-		        const fileResponse = await fetch(`${baseUrl}/${targetFile}`);
-		        if (!fileResponse.ok) {
-		            throw new Error(`cannot load ${targetFile}: HTTP ${fileResponse.status}`);
-		        }
-		
-		        const fileData = await fileResponse.json();
-		
-		        return fileData;
-		
-		    } catch (error) {
-		        console.error('failed, in a word your data is missing:', error);
-				errinfo = error.message;
-		        return null;
-		    }
-		}
 		async function renderData() {
-			const content = await loadData(itemId);
+			const content = await loadItemData(itemCategory, itemId);
 			
 			const imageList = document.getElementById("imageList");
 			const content_container = document.getElementById('detailContainer');
@@ -334,6 +294,7 @@
 		function changeImage(src) {
 		    document.getElementById('mainImage').src = src;
 		}
+		window.changeImage = changeImage;
 
 		document.addEventListener("DOMContentLoaded", renderData);
 	</script>
