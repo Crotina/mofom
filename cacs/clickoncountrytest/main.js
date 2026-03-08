@@ -1,4 +1,5 @@
-// ===== 地图初始化 =====
+import { allCountries as a, exceptedCountries } from "./storage.js";
+
 const map = L.map('map', {
   center: [0, 0],
   zoom: 2,
@@ -11,188 +12,15 @@ const map = L.map('map', {
   tap: false               // 禁用触摸拖动
 });
 
-const allCountries = new Set([
-    "Greenland",
-    "Norway",
-    "Canada",
-    "United States of America",
-    "Mexico",
-    "Guatemala",
-    "Belize",
-    "El Salvador",
-    "Honduras",
-    "Nicaragua",
-    "Costa Rica",
-    "Panama",
-    "Colombia",
-    "Venezuela",
-    "Ecuador",
-    "Peru",
-    "Bolivia",
-    "Chile",
-    "Paraguay",
-    "Argentina",
-    "Uruguay",
-    "Brazil",
-    "Falkland Islands",
-    "Suriname",
-    "Guyana",
-    "French Guiana",
-    "France",
-    "United Kingdom",
-    "Ireland",
-    "Spain",
-    "Portugal",
-    "Switzerland",
-    "Italy",
-    "Austria",
-    "Germany",
-    "Belgium",
-    "Netherlands",
-    "Czech Republic",
-    "Poland",
-    "Slovakia",
-    "Hungary",
-    "Slovenia",
-    "Croatia",
-    "Bosnia and Herzegovina",
-    "Republic of Serbia",
-    "Montenegro",
-    "Albania",
-    "Kosovo",
-    "Macedonia",
-    "Greece",
-    "Bulgaria",
-    "Turkey",
-    "Romania",
-    "Ukraine",
-    "Belarus",
-    "Lithuania",
-    "Latvia",
-    "Estonia",
-    "Russia",
-    "Sweden",
-    "Denmark",
-    "Finland",
-    "Moldova",
-    "Georgia",
-    "Armenia",
-    "Azerbaijan",
-    "Iran",
-    "Iraq",
-    "Syria",
-    "West Bank",
-    "Israel",
-    "Jordan",
-    "Lebanon",
-    "Cyprus",
-    "Northern Cyprus",
-    "Tunisia",
-    "Algeria",
-    "Morocco",
-    "Egypt",
-    "Libya",
-    "Chad",
-    "Sudan",
-    "Niger",
-    "Mali",
-    "Burkina Faso",
-    "Mauritania",
-    "Western Sahara",
-    "Senegal",
-    "Guinea",
-    "Guinea Bissau",
-    "Sierra Leone",
-    "Liberia",
-    "Ivory Coast",
-    "Ghana",
-    "Togo",
-    "Benin",
-    "Cameroon",
-    "Nigeria",
-    "Equatorial Guinea",
-    "Gabon",
-    "Republic of the Congo",
-    "Central African Republic",
-    "Democratic Republic of the Congo",
-    "South Sudan",
-    "Ethiopia",
-    "Uganda",
-    "Kenya",
-    "United Republic of Tanzania",
-    "Somalia",
-    "Somaliland",
-    "Djibouti",
-    "Eritrea",
-    "Yemen",
-    "Saudi Arabia",
-    "Qatar",
-    "Kuwait",
-    "United Arab Emirates",
-    "Oman",
-    "Mozambique",
-    "Zambia",
-    "Zimbabwe",
-    "Malawi",
-    "Botswana",
-    "South Africa",
-    "Swaziland",
-    "Lesotho",
-    "Namibia",
-    "Angola",
-    "Burundi",
-    "Rwanda",
-    "Madagascar",
-    "The Bahamas",
-    "Cuba",
-    "Jamaica",
-    "Haiti",
-    "Dominican Republic",
-    "Puerto Rico",
-    "Trinidad and Tobago",
-    "Antarctica",
-    "Australia",
-    "Indonesia",
-    "Papua New Guinea",
-    "Solomon Islands",
-    "New Caledonia",
-    "Vanuatu",
-    "Fiji",
-    "Philippines",
-    "Malaysia",
-    "Brunei",
-    "Thailand",
-    "Myanmar",
-    "Cambodia",
-    "Vietnam",
-    "Laos",
-    "Bangladesh",
-    "India",
-    "Nepal",
-    "Bhutan",
-    "China",
-    "Kazakhstan",
-    "Mongolia",
-    "North Korea",
-    "South Korea",
-    "Taiwan",
-    "Japan",
-    "Sri Lanka",
-    "Pakistan",
-    "Afghanistan",
-    "Turkmenistan",
-    "Uzbekistan",
-    "Tajikistan",
-    "Kyrgyzstan",
-    "Iceland",
-    "New Zealand",
-    "Luxembourg",
-    "Malta"
-]);
+const allCountries = a;
 
 function pickRandomCountry() {
     const countriesArray = Array.from(allCountries);
-    return countriesArray[Math.floor(Math.random() * countriesArray.length)];
+    const result = countriesArray[Math.floor(Math.random() * countriesArray.length)];
+    if (exceptedCountries.has(result)) {
+        return pickRandomCountry();
+    }
+    return result;
 }
 
 let timer = {
@@ -224,6 +52,25 @@ const countryLayers = new Map();        // 存储所有国家的地图图层
 let isColoringEnabled = true;           // 着色功能开关
 let userLatesetCountry = null;              // 记录用户上次点击的国家
 let isDragging = false;                 // 标记是否正在拖动地图
+let gameStarted = false;                // 标记游戏是否开始
+let game = {
+  mode: '',
+  hearts: 0,
+  gameStarted: false,
+  nextSetp: function() {
+    
+  },
+  start: function() {
+
+  }
+}
+
+
+document.getElementById('timer').addEventListener('change', (e) => {
+  const value = e.target.value;
+  console.log(`计时器设置：${value}`);
+  document.getElementById('timer_setting').style.display = (value === '1') ? 'block' : 'none';
+});
 
 // ===== 地图事件处理 =====
 
@@ -239,16 +86,48 @@ map.on('dragend', () => {
 
 // ===== 功能函数 =====
 
+function changepage(pageid) {
+  const pages = document.querySelectorAll('.barpage');
+  pages.forEach(page => {
+    if (page.id === pageid) {
+      page.style.display = 'flex';
+    } else {
+      page.style.display = 'none';
+    }
+  }
+  );
+}
+
+function init() {
+  changepage('mode_select');
+  removeAllColors();
+
+  game.mode = '';
+  game.hearts = 0;
+  gameStarted = false;
+
+  // addAllCountriesColor('#fdfdf1');
+  toggleColoringAbilityTo(false);
+  
+}
+
 // 给国家上色
-function colorCountry(countryName) {
+function colorCountry(countryName, codeHex = "#FFA500", addToSelected = true) {
   const layer = countryLayers.get(countryName);
   if (layer) {
     layer.setStyle({
-      fillColor: "orange",
-      fillOpacity: 0.6
+      fillColor: codeHex,
+      fillOpacity: 1
     });
-    selectedCountries.add(countryName);
+    if (addToSelected) selectedCountries.add(countryName);
   }
+}
+
+window.toggleColoringAbilityTo = toggleColoringAbilityTo;
+function addAllCountriesColor(colorCodeHex) {
+  allCountries.forEach((countryName) => {
+    colorCountry(countryName, colorCodeHex);
+  });
 }
 
 // 移除国家颜色
@@ -256,17 +135,17 @@ function removeCountryColor(countryName) {
   const layer = countryLayers.get(countryName);
   if (layer) {
     layer.setStyle({
-      fillOpacity: 0
+      fillColor: '#fdfdf1',
+      fillOpacity: 1
     });
     selectedCountries.delete(countryName);
   }
 }
 
 // 切换着色功能（禁用/启用）
-function toggleColoringAbility() {
-  isColoringEnabled = !isColoringEnabled;
-  const status = isColoringEnabled ? "已启用" : "已禁用";
-  console.log(`着色功能${status}`);
+function toggleColoringAbilityTo(boolv) {
+  isColoringEnabled = boolv;
+  console.log('coloringMode = ', isColoringEnabled);
 }
 
 function removeAllColors() {
@@ -286,7 +165,8 @@ fetch("https://raw.githubusercontent.com/johan/world.geo.json/master/countries.g
       style: {
         color: "#555",        // 边界线颜色
         weight: 1,            // 边界线宽度
-        fillOpacity: 0        // 默认不填充颜色
+        fillColor: '#fdfdf1', // 默认填充颜色
+        fillOpacity: 1
       },
       onEachFeature: (feature, layer) => {
         const countryName = feature.properties.name;
@@ -307,7 +187,7 @@ fetch("https://raw.githubusercontent.com/johan/world.geo.json/master/countries.g
 
           // 检查着色功能是否被禁用
           if (!isColoringEnabled) {
-            console.log("着色功能已禁用，无法操作");
+            // console.log("着色功能已禁用，无法操作");
             return;
           }
 
@@ -319,11 +199,11 @@ fetch("https://raw.githubusercontent.com/johan/world.geo.json/master/countries.g
 
           // 切换国家的着色状态
           if (selectedCountries.has(countryName)) {
-            // 已选中 → 移除颜色
+            // 已选中
             removeCountryColor(countryName);
           } else {
-            // 未选中 → 添加颜色
-            colorCountry(countryName);
+            // 未选中
+            colorCountry(countryName, '#ffa500');
             userLatesetCountry = countryName; // 更新用户上次点击的国家
             if (allCountries.has(countryName)) {
                 console.log(`用户点击了 ${countryName}，这是一个有效的国家`);
@@ -353,4 +233,11 @@ fetch("https://raw.githubusercontent.com/johan/world.geo.json/master/countries.g
         });
       }
     }).addTo(map);
+    init();
+
   });
+
+  // 备用：如果 fetch 失败，确保 init 也会被调用
+  // document.addEventListener('DOMContentLoaded', () => {
+  //   init();
+  // });

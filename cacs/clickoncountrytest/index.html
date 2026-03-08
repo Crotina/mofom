@@ -14,23 +14,29 @@
     <div id="bar">
         <div id="main">
             <h3>Map Game</h3>
-
+            <p>can you identify all countries in the world?</p>
         </div>
-        <div id="modeSelect">
+        <div id="mode_select" class="barpage">
             <select name="mode" id="mode">
-                <option value="click"></option>
-                <option value=""></option>
+                <option value="click">click on a country</option>
+                <option value="typ">typing the name of highligh country</option>
             </select>
+            <select name="timer" id="timer">
+                <option value="0">no timer</option>
+                <option value="1">timer open</option>
+            </select>
+            <input type="number" name="timer_setting" id="timer_setting" placeholder="minute" max="5" min="1">
+            <button id="startgame">start!</button>
         </div>
-        <div id="click">
-
+        <div id="click" class="barpage">
+            <h1>click</h1>
         </div>
-        <div id="enter">
-
+        <div id="typ" class="barpage">
+            <h1>enter</h1>
         </div>
     </div>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="main.js"></script>
+    <script src="main.js" type="module"></script>
 </body>
 </html>
