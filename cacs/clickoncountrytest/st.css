@@ -18,8 +18,12 @@ header {
     height: 100vh;
     width: 100vw;
     background-color: rgb(76, 104, 187);
-    border: 2px dotted rgba(0, 0, 0, 1);
+    /* border: 2px dotted rgba(0, 0, 0, 1); */
 }
+
+/* .leaflet-overlay-pane svg g {
+    border: 2px dotted rgb(255, 255, 255);
+} */
 
 #bar {
     position: fixed;
@@ -30,8 +34,8 @@ header {
     bottom: 0; /* 改为0，让bar贴底 */
     left: 0;
     right: 0;
-    background-color: rgba(240, 248, 255, 0.2);
-    backdrop-filter: blur(12px);
+    background-color: rgba(240, 248, 255, 0.5);
+    backdrop-filter: blur(5px);
     padding: 15px 10px;
     width: 100vw;
     z-index: 1000; /* 确保bar在地图上方 */
@@ -60,6 +64,7 @@ header {
   background-color: #fff;
   /* color: dimgray; */
     font-size: 20px;
+    cursor: pointer;
 }
 
 #timer_setting {
