@@ -181,5 +181,6 @@ export const allCountries = new Set([
 
 export const exceptedCountries = new Set([
     "Western Sahara",
-    'French Southern and Antarctic Lands'
+    'French Southern and Antarctic Lands',
+    'Antarctica'
 ]);
