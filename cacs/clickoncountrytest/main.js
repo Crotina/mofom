@@ -124,6 +124,7 @@ const secondary_title = document.getElementById('secondary_title'); // 次要标
 let game = {
   mode: '',
   hearts: 0,
+  correct_click: 0,
   total_questions: 0,
   answer_finished_count: 0,
   gameStarted: false,
@@ -132,10 +133,10 @@ let game = {
 
 
   update_secondary_title: function() {
-    secondary_title.textContent = `Question ${this.answer_finished_count} / ${this.total_questions} | Hearts: ${this.hearts}`;
+    secondary_title.innerHTML = `Correct: ${this.answer_finished_count - 1} | Wrong: ${this.hearts} | Accuracy: ${solve_accuracy(cauculate_accuracy(this.answer_finished_count - 1, this.answer_finished_count - 1 + this.hearts))}`;
   },
   nextSetp: function() {
-    console.log('进入下一步: '+this);
+    console.log('进入下一步: ', this);
     toggleColoringAbilityTo(true); // 启用着色功能，允许用户点击国家
     const mode = this.mode;
     const click_text = document.getElementById('click_text');
@@ -163,6 +164,7 @@ let game = {
     if (countryName === this.correct_answer) {
       notice('correct!', 0);
       this.correct_answer_count++;
+      // this.correct_click++;
 
       // setTimeout(() => {
       //   this.nextSetp();
@@ -171,11 +173,11 @@ let game = {
       return true;
     } else {
       notice('wrong answer!', 2);
-      this.hearts--;
-      if (this.hearts <= 0) {
-        notice('game over! you have no hearts left.', 2);
-        this.end();
-      }
+      this.hearts++;
+      // if (this.hearts > 3 * this.correct_click) {
+      //   notice('game over! your incorrect click is already 3 times of your correct click', 2);
+      //   this.end();
+      // }
       this.update_secondary_title();
       return false;
     }
@@ -205,7 +207,7 @@ let game = {
     this.mode = mode.value;
     this.gameStarted = true;
     this.total_questions =  total_question.value;
-    this.hearts = 3;
+    this.hearts = 0; //现在heart代表错误回答了
 
     changepage(this.mode);
     this.nextSetp();
@@ -214,6 +216,36 @@ let game = {
 
   }
 };
+
+/**
+ * 
+ * @param {number} correct 
+ * @param {number} total 
+ * @returns percents
+ */
+function cauculate_accuracy(correct_1, total_1) {
+  let correct = parseInt(correct_1);
+  let total = parseInt(total_1);
+  
+  if(isNaN(correct / total)) {
+    return 0;
+  }
+  return (100 * correct / total).toFixed(1)
+}
+window.cauculate_accuracy = cauculate_accuracy;
+
+function solve_accuracy(accuracy) {
+  if(accuracy > 80) {
+    return `<span style="color: #348700; ">${accuracy}%</span>`
+  } else if (accuracy > 50) {
+    return `<span style="color: #ffd600; ">${accuracy}%</span>`
+  } else if (accuracy > 25) {
+    return `<span style="color: #ff6d00; ">${accuracy}%</span>`
+  } else { 
+    return `<span style="color: #d50000; ">${accuracy}%</span>`
+  }
+}
+
 
 document.getElementById('start_game').addEventListener('click', () => {
   game.start();

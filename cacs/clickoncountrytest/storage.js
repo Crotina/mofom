@@ -182,5 +182,15 @@ export const allCountries = new Set([
 export const exceptedCountries = new Set([
     "Western Sahara",
     'French Southern and Antarctic Lands',
-    'Antarctica'
+    'Antarctica',
+    'Vanuatu',
+    "Falkland Islands",
+    'New Caledonia'
 ]);
+
+export const country_rename = new Set([,
+    ['Macedonia', 'North Macedonia'],
+    ['Republic of Serbia', 'Serbia'],
+    ['United Republic of Tanzania', 'Tanzania']
+
+])

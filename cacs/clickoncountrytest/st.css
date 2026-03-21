@@ -54,6 +54,9 @@ h3,p {
     width: 100%;
     margin: 20px 0;
 }
+.barpage > select {
+    display: none;
+}
 #mode_select {
     padding: 10px 20px;
     border-radius: 8px;
