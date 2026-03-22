@@ -134,7 +134,7 @@ let game = {
     secondary_title.innerHTML = `Correct: ${this.answer_finished_count - 1} | Wrong: ${this.hearts} | Accuracy: ${solve_accuracy(cauculate_accuracy(this.answer_finished_count - 1, this.answer_finished_count - 1 + this.hearts))}`;
   },
   nextSetp: function() {
-    console.log('进入下一步: ', this);
+    // console.log('进入下一步: ', this);
     toggleColoringAbilityTo(true); // 启用着色功能，允许用户点击国家
     const mode = this.mode;
     const click_text = document.getElementById('click_text');
@@ -362,7 +362,7 @@ function removeCountryColor(countryName) {
 // 切换着色功能（禁用/启用）
 function toggleColoringAbilityTo(boolv) {
   isColoringEnabled = boolv;
-  console.log('coloringMode = ', isColoringEnabled);
+  // console.log('coloringMode = ', isColoringEnabled);
 }
 
 function removeAllColors() {
@@ -395,7 +395,7 @@ fetch("https://raw.githubusercontent.com/johan/world.geo.json/master/countries.g
         layer.on("click", (e) => {
           // 如果正在拖动地图，忽略点击事件
           if (isDragging) {
-            console.log("正在拖动地图，忽略点击事件");
+            // console.log("正在拖动地图，忽略点击事件");
             return;
           }
 
@@ -412,7 +412,7 @@ fetch("https://raw.githubusercontent.com/johan/world.geo.json/master/countries.g
 
           // 输出点击信息
           console.log("点击坐标：", latlng);
-          console.log("点击国家：", countryName);
+          // console.log("点击国家：", countryName);
 
           if (game.gameStarted) {
             toggleColoringAbilityTo(false); // 禁用着色功能，避免用户在等待下一题时点击其他国家
