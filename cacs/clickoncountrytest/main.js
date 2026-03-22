@@ -135,11 +135,10 @@ let game = {
   },
   nextSetp: function() {
     // console.log('进入下一步: ', this);
+    removeAllColors();
     toggleColoringAbilityTo(true); // 启用着色功能，允许用户点击国家
     const mode = this.mode;
     const click_text = document.getElementById('click_text');
-
-    removeAllColors();
 
     switch (mode) {
       case 'click':
@@ -401,6 +400,9 @@ fetch("https://raw.githubusercontent.com/johan/world.geo.json/master/countries.g
 
           // 阻止事件冒泡，避免与地图拖动冲突
           L.DomEvent.stopPropagation(e);
+
+          if (e.originalEvent._handled) return;
+          e.originalEvent._handled = true;
 
           // 检查着色功能是否被禁用
           if (!isColoringEnabled) {
