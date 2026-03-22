@@ -317,7 +317,7 @@ function init() {
 
   game.mode = '';
   game.hearts = 0;
-  gameStarted = false;
+  game.gameStarted = false;
 
   // addAllCountriesColor('#fdfdf1');
   toggleColoringAbilityTo(false);
@@ -481,7 +481,7 @@ fetch("https://raw.githubusercontent.com/johan/world.geo.json/master/countries.g
     }).addTo(map);
     init();
 
-  });
+  }).catch(e => (console.error(e)));
 
   // 备用：如果 fetch 失败，确保 init 也会被调用
   // document.addEventListener('DOMContentLoaded', () => {
