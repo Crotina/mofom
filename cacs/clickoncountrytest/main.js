@@ -1,4 +1,4 @@
-import { allCountries as a, exceptedCountries } from "./storage.js";
+import { allCountries as a, exceptedCountries, country_rename } from "./storage.js";
 
 function formatTime(seconds) {
     const m = Math.floor(seconds / 60);
@@ -116,9 +116,7 @@ const selectedCountries = new Set();    // 记录已选中的国家
 const countryLayers = new Map();        // 存储所有国家的地图图层
 const countryColors = new Map();        // 追踪每个国家当前应有的颜色
 let isColoringEnabled = true;           // 着色功能开关
-let userLatesetCountry = null;              // 记录用户上次点击的国家
 let isDragging = false;                 // 标记是否正在拖动地图
-let gameStarted = false;                // 标记游戏是否开始
 const timerDisplay = document.getElementById('timer-display'); // 计时器显示元素
 const secondary_title = document.getElementById('secondary_title'); // 次要标题元素
 let game = {
@@ -147,7 +145,7 @@ let game = {
       case 'click':
         const randomCountry = pickRandomCountry();
         
-        click_text.innerHTML = `click on <strong>${randomCountry}</strong>`;
+        click_text.textContent = solve_display_countryname(randomCountry);
         this.answer_finished_count++;
         
         this.correct_answer = randomCountry;
@@ -246,6 +244,10 @@ function solve_accuracy(accuracy) {
   }
 }
 
+function solve_display_countryname(countryname) {
+  return country_rename.get(countryname) || countryname;
+}
+window.solve_display_countryname = solve_display_countryname;
 
 document.getElementById('start_game').addEventListener('click', () => {
   game.start();
@@ -378,7 +380,7 @@ fetch("https://raw.githubusercontent.com/johan/world.geo.json/master/countries.g
     // 在地图上绘制所有国家
     L.geoJSON(data, {
       style: {
-        color: "#555",        // 边界线颜色
+        color: "#000",        // 边界线颜色
         weight: 1,            // 边界线宽度
         fillColor: '#fdfdf1', // 默认填充颜色
         fillOpacity: 1

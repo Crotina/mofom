@@ -188,9 +188,11 @@ export const exceptedCountries = new Set([
     'New Caledonia'
 ]);
 
-export const country_rename = new Set([,
+export const country_rename = new Map([
     ['Macedonia', 'North Macedonia'],
     ['Republic of Serbia', 'Serbia'],
-    ['United Republic of Tanzania', 'Tanzania']
+    ['United Republic of Tanzania', 'Tanzania'],
+    ['United Arab Emirates', 'UAE'],
+    ['Swaziland', 'Eswatini']
 
-])
+]);
