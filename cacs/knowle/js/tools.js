@@ -16,14 +16,6 @@ export async function get_new_knowledge() {
     }
 }
 
-export function convert_array_to_string(arr) {
-    let text = '';
-    for (let i = 0; i < arr.length; i++) {
-        text += arr[i]
-    }
-    return text;
-}
-
 export class TextAnimation {
     /**
      * 它可以使一个元素内的内容以打字机动画消失或出现
@@ -37,7 +29,6 @@ export class TextAnimation {
     }
 
     async _delay(time_ms) {
-        time_ms = Math.round(time_ms)
         return new Promise((resolve, reject) => {
             if (typeof(time_ms) !== 'number') {
                 reject('type error');
@@ -55,6 +46,7 @@ export class TextAnimation {
         this.is_doing = true;
         let original_texts = (this.text_container.textContent).split("");
         let original_texts_len = original_texts.length;
+        const delay_per_text = Math.round(this.animation_time / original_texts_len);
 
         for (let i = 0; i < original_texts_len; i++) {
             original_texts.pop()
@@ -63,7 +55,7 @@ export class TextAnimation {
             // console.log(current_text)
             this.text_container.textContent = current_text
 
-            await this._delay(this.animation_time / original_texts_len)
+            await this._delay(delay_per_text)
             // console.log('this loop over')
         }
         this.is_doing = false
@@ -74,12 +66,13 @@ export class TextAnimation {
 
         this.is_doing = true
         let current_text = '';
+        const delay = Math.round(this.animation_time / text.length);
 
         for(let i = 0; i < text.length; i++) {
             current_text += text[i];
             // console.log(current_text);
             this.text_container.textContent = current_text;
-            await this._delay(this.animation_time / text.length);
+            await this._delay(delay);
         }
         this.is_doing = false
     }
