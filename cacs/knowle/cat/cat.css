@@ -1,9 +1,29 @@
 .cat_img {
+    --cat_wid: 30vw;
+    max-width: 800px;
+    max-height: 600px;
+    min-width: 550px;
+    width: var(--cat_wid);
     position: fixed;
     bottom: 0;
-    right: 0;
+    /* right: calc(calc(0px - 5vw) - calc(0.20 * var(--cat_wid))); */
+    right: -110px;
     z-index: 0;
 }
 section {
     z-index: 1;
+}
+body {
+    background-color: #abe7db
+}
+
+@media screen and (max-width: 768px) {
+    .cat_img {
+        right: -140px;
+    }
+    section.display_txt_main {
+        /* justify-content: flex-start; */
+        border-bottom: none;
+        height: calc(60vh - 3px);
+    }
 }

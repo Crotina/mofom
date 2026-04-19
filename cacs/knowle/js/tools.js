@@ -63,6 +63,7 @@ export class TextAnimation {
     }
 
     async addText(text) {
+        console.log(text)
         if(this.is_doing) return
 
         this.is_doing = true
