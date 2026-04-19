@@ -9,7 +9,8 @@ const datas = {
     i: 0,
     d: []
 }
-const update_btn = document.getElementById('update')
+const update_btn = document.getElementById('update');
+update_btn.addEventListener('click', () => load_new_cat_facts())
 function disable_the_btn() {
     update_btn.textContent = 'LOADING...'
     update_btn.classList.add('disabled');
@@ -83,7 +84,7 @@ async function load_new_cat_facts() {
         datas.i++;
         setTimeout(() => {
             enable_the_btn()
-        }, 1000);
+        }, 2000);
     })
 
     
