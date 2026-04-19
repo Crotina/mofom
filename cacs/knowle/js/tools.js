@@ -46,7 +46,8 @@ export class TextAnimation {
         this.is_doing = true;
         let original_texts = (this.text_container.textContent).split("");
         let original_texts_len = original_texts.length;
-        const delay_per_text = Math.round(this.animation_time / original_texts_len);
+        let delay_per_text = Math.round(this.animation_time / original_texts_len);
+        if (delay_per_text === 0) delay_per_text = 1
 
         for (let i = 0; i < original_texts_len; i++) {
             original_texts.pop()
@@ -66,7 +67,8 @@ export class TextAnimation {
 
         this.is_doing = true
         let current_text = '';
-        const delay = Math.round(this.animation_time / text.length);
+        let delay = Math.round(this.animation_time / text.length);
+        if(delay === 0) delay = 1
 
         for(let i = 0; i < text.length; i++) {
             current_text += text[i];
