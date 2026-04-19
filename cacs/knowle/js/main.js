@@ -38,13 +38,3 @@ function update_new_knowledge() {
 }
 
 update_btn.addEventListener('click', () => update_new_knowledge())
-
-document.getElementById('textbtn').addEventListener('click', () => {
-    txt.deleteTexts()
-})
-
-document.getElementById('textbtn_add').addEventListener('click', () => {
-    txt.addText('hello this is the text test text, text over')
-})
-
-window.update = update_new_knowledge;
