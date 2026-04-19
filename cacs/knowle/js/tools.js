@@ -1,8 +1,8 @@
 /**
  * @returns {Object}
  */
-export async function get_new_knowledge() {
-    const url = 'https://uselessfacts.jsph.pl//api/v2/facts/random?language=en';
+export async function get_new_knowledge(url = 'https://uselessfacts.jsph.pl//api/v2/facts/random?language=en') {
+    // const ;
     try {
         let response = await fetch(url)
         if (!response.ok) {
