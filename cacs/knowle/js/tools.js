@@ -6,13 +6,14 @@ export async function get_new_knowledge(url = 'https://uselessfacts.jsph.pl//api
     try {
         let response = await fetch(url)
         if (!response.ok) {
-            throw new Error(response)
+            throw new Error(`${response.status} ${response.statusText}`)
         }
         const data = await response.json();
+        console.log(data)
         return data;
     } catch(error) {
         console.error(error);
-        return null
+        return {data: [`Error: ${error.message}`]}
     }
 }
 

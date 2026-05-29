@@ -26,27 +26,36 @@ const lang_setting = urlpa.get('lang');
 
 const txt = new TextAnimation(document.getElementById('test_texts'), text_animation_time)
 
-const available_lang = [
-    'eng-us',
-    'ces-cz','cze-cz',
-    'ger-de',
-    'ben-in',
-    'esp-es',
-    'esp-mx',
-    'rus-ru',
-    'por-br',
-    'tl-fil',
-    'ukr-ua',
-    'urd-ur',
-    'ita-it',
-    'zho-tw',
-    'kor-ko'
-]
+const available_lang_list = [
+    ['English', 'eng-us'],
+    ['Español (México)', 'esp-mx'],
+    ['Español (España)', 'esp-es'],
+    ['中文', 'zho-tw'],
+    ['Українська', 'ukr-ua'],
+    ['Русский', 'rus-ru'],
+    ['Čeština', 'ces-cz'],
+    ['Deutsch', 'ger-de'],
+    ['বাংলা', 'ben-in'],
+    ['Português (Brasil)', 'por-br'],
+    ['Tagalog', 'fil-tl'],
+    ['اردو', 'urd-ud'],
+    ['Italiano', 'ita-it'],
+    ['한국어', 'kor-ko']
+];
+const display_current_lang = document.getElementById('display_current_language')
+const lang_option = document.querySelector('.language_option');
+const lang_list = document.getElementById('language_list');
+available_lang_list.map(i => {
+    document.getElementById('langlist').insertAdjacentHTML('beforeend', `<li><a href="${window.location.pathname}?lang=${i[1]}">${i[0]}</a></li>`)
+})
+const available_lang = available_lang_list.map(i => i[1])
 
 if (lang_setting != null && available_lang.includes(lang_setting)) {
     console.log('available lang detacted: ', available_lang)
     lang = lang_setting;
 }
+const langcurrent = available_lang_list.find(i => i[1] == lang)[0]
+display_current_lang.textContent = `Language (current: ${langcurrent})`
 
 const url = `https://meowfacts.herokuapp.com/?count=${preload_count}&lang=${lang}`;
 
@@ -56,6 +65,7 @@ async function test_1() {
 }
 async function set_new_content() {
     const ct = await get_new_knowledge(url);
+    console.log(ct)
     if (ct === null) ct = {data: ['FAILED TO GET DATA!']}
     datas.d = ct.data;
     datas.i = 0;
@@ -86,11 +96,13 @@ async function load_new_cat_facts() {
             enable_the_btn()
         }, 2000);
     })
-
-    
-
-
 }
+
+lang_option.addEventListener('click', () => {
+    // alert('it is not done yet')
+    console.log(lang_list.style.display)
+    lang_list.style.display = lang_list.style.display == 'block' ? 'none' : 'block'
+})
 window.get_new_info = test_1;
 window.set_new_content = set_new_content;
 window.load_new_cat_facts = load_new_cat_facts;
