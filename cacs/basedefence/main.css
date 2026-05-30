@@ -1,0 +1,155 @@
+/* 全局基础样式 */
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background-color: black;
+  overflow: hidden; /* 防止游戏画面出现滚动条 */
+}
+
+@font-face {
+    font-family: dosis;
+    src: url(./font/Dosis\ SemiBold.ttf);
+}
+@font-face {
+    font-family: consolas;
+    src: url(./font/Consolas.ttf);
+}
+@font-face {
+    font-family: barlow_mid;
+    src: url(./font/Barlow\ Medium.ttf);
+}
+
+* {
+  touch-action: none;
+  cursor: crosshair;
+  font-family: barlow_mid;
+}
+
+/* 游戏顶部固定 UI (分数、音量) */
+.game-ui-top {
+  position: absolute;
+  color: white;
+  padding: 8px;
+  font-size: 22px;
+  user-select: none;
+  z-index: 10;
+}
+
+.game-ui-top.left {
+  top: 0;
+  left: 0;
+}
+
+.game-ui-top.right {
+  top: 0;
+  right: 0;
+}
+
+.volume-icon {
+  color: white;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+#volumeOffEl {
+  display: none;
+}
+
+/* 模态框统一样式 (开始、暂停、结束通用) */
+.game-modal {
+  position: absolute;
+  background-color: white;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 16px;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  border-radius: 5px;
+  z-index: 10;
+  box-sizing: border-box; /* 保证 padding 不撑破宽度 */
+}
+
+/* 模态框内的细节元素 */
+.game-modal label {
+  font-size: 18px;
+  color: gray;
+}
+
+.game-modal h1 {
+  margin-bottom: 0;
+  margin-top: 8px;
+}
+
+#modalScoreEl {
+  font-size: 52px;
+  
+}
+#scoreEl,#modalScoreEl {
+    font-family: consolas;
+}
+
+#startModalEl h1, 
+#pauseModalEl h1 {
+  font-size: 28px;
+}
+
+.game-modal p {
+  margin: 0;
+}
+
+.game-modal p.muted-text {
+  font-size: 18px;
+  color: gray;
+}
+
+.game-modal p.subtitle {
+  color: #333;
+  font-weight: bold;
+}
+
+/* 统一的交互按钮 */
+.game-btn {
+  margin-top: 12px;
+  background-color: blue;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background-color 0.2s ease;
+}
+
+.game-btn:hover {
+  background-color: darkblue;
+}
+
+/* 按键指南指南类 */
+span.kg {
+  background-color: antiquewhite;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin: 0 3px;
+  color: black;
+  font-weight: bold;
+  font-family: consolas;
+}
+
+ul.keyguide {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  display: inline-block;
+  text-align: left;
+}
+
+ul.keyguide > li {
+  margin: 0.8em 0.5em;
+  list-style: none;
+  color: #333;
+  font-size: 14px;
+}

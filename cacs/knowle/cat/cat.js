@@ -81,7 +81,7 @@ async function load_new_cat_facts() {
             console.log('请求新数据喵')
             await set_new_content();
             current_fact = datas.d[datas.i];
-            return current_fact;
+            return current_fact
         }
     }
 
