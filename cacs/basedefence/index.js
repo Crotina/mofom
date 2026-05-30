@@ -688,11 +688,11 @@ window.addEventListener('keydown', (event) => {
     case 'p':
     case 'P':
     case 'Escape':
-      if (paused) {
-        resumeGame()
-      } else {
+      if (game.active) {
         pauseGame()
         pauseModalEl.style.display = 'block'
+      } else if (paused) {
+        resumeGame()
       }
       break
     case ' ':
