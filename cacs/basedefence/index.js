@@ -77,6 +77,8 @@ const timerManager = {
 
 
 function init() {
+  console.log('game.active: ', game.active)
+  console.error('test')
   const x = canvas.width / 2
   const y = canvas.height / 2
   player = new Player(x, y, 10, 'white')
@@ -470,7 +472,7 @@ let audioInitialized = false
 let wasPlayingBeforeHidden = false
 
 function pauseGame() {
-  if (paused) return
+  if (paused && !game.active) return
   paused = true
   cancelAnimationFrame(animationId)
   timerManager.clearAll()
@@ -482,6 +484,7 @@ function pauseGame() {
 
 function resumeGame() {
   if (!paused) return
+  console.log('resumed game')
   paused = false
   game.active = true
   if (audioInitialized && audio && audio.background && audio.background.play) audio.background.play()
@@ -627,18 +630,28 @@ volumeOffEl.addEventListener('click', () => {
 window.addEventListener('resize', () => {
   canvas.width = innerWidth
   canvas.height = innerHeight
-
-  init()
+    
+  if (game.active) init()
 })
+
+// document.addEventListener('visibilitychange', () => {
+//   if (document.hidden) {
+//     // inactive — 如果在隐藏前正在运行则暂停，并记录状态
+//     wasPlayingBeforeHidden = game.active && !paused
+//     if (wasPlayingBeforeHidden) pauseGame()
+//   } else {
+//     // 可见时如果是因为切换而暂停，则恢复
+//     if (wasPlayingBeforeHidden) resumeGame()
+//   }
+// })
 
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
-    // inactive — 如果在隐藏前正在运行则暂停，并记录状态
-    wasPlayingBeforeHidden = game.active && !paused
-    if (wasPlayingBeforeHidden) pauseGame()
-  } else {
-    // 可见时如果是因为切换而暂停，则恢复
-    if (wasPlayingBeforeHidden) resumeGame()
+    // 如果切走标签页时，游戏正在高能运行，我们手动帮玩家调用暂停键的逻辑
+    if (game.active) {
+      pauseGame()
+      pauseModalEl.style.display = 'block' // 顺便把暂停菜单显示出来
+    }
   }
 })
 
