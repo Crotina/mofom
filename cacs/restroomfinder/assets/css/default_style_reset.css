@@ -1,0 +1,23 @@
+@font-face {
+    font-family: barlow;
+    src: url('../Barlow\ Medium.ttf');
+}
+* {
+    margin: 0px;
+    padding: 0px;
+    font-family: barlow;
+}
+button {
+    outline: none;
+    border: none;
+    border-radius: 5px;
+}
+p {
+    margin: 0;
+}
+
+dialog {
+    margin: auto;
+    outline: none;
+    border: none;
+}

@@ -1,0 +1,23 @@
+{
+    "id": 52715,
+    "name": "La Riviera Dr & Waterglen Cir (EB), Sacramento, CA 95826, USA",
+    "street": "La Riviera Dr & Waterglen Cir (EB)",
+    "city": "Sacramento",
+    "state": "California",
+    "accessible": false,
+    "unisex": false,
+    "directions": "",
+    "comment": "Park bathroom. Vanalism and closed sumset to sunrise",
+    "latitude": 38.560032,
+    "longitude": -121.39019,
+    "created_at": "2019-09-13T18:47:06.175Z",
+    "updated_at": "2019-09-13T18:47:06.311Z",
+    "downvote": 0,
+    "upvote": 0,
+    "country": "US",
+    "changing_table": false,
+    "edit_id": 52715,
+    "approved": true,
+    "distance": 0.811692430886711,
+    "bearing": "328.993467703934"
+}
