@@ -82,7 +82,7 @@ const dialog_notice = new Dialog_notice(document.getElementById('dialog_notice')
 const restroom_markers = []
 
 const def_rst_set = {
-    shadowUrl: '../assets/icon/shadow.png',
+    shadowUrl: './assets/icon/shadow.png',
 
     iconSize:     [78, 54], // size of the icon
     shadowSize:   [84, 60], // size of the shadow
@@ -95,7 +95,7 @@ function debug() {
     if (devmode) {
         L.marker([38.6548763, -121.3835029], {
             icon: L.icon({
-                    iconUrl: `../assets/icon/100.png`,
+                    iconUrl: `./assets/icon/100.png`,
                     ...def_rst_set
                 })
         }).addTo(map)
@@ -277,7 +277,7 @@ function show_restroom_detail(restroom_id, not_on_map = false) {
         showing_restroom_not_on_map.is_it = true
         let mk = L.marker([restroom_obj.latitude, restroom_obj.longitude], {
             icon: L.icon({
-                    iconUrl: `../assets/icon/${restroom_obj.accessible?1:0}${restroom_obj.unisex?1:0}${restroom_obj.changing_table?1:0}.png`,
+                    iconUrl: `./assets/icon/${restroom_obj.accessible?1:0}${restroom_obj.unisex?1:0}${restroom_obj.changing_table?1:0}.png`,
                     ...def_rst_set
                 })
         }).addTo(map)
@@ -403,7 +403,7 @@ function show_filtered_restroom(restroom_arr, resetView = true) {
     rst.forEach(element => {
         const marker = L.marker([element.latitude, element.longitude], {
             icon: L.icon({
-                iconUrl: `../assets/icon/${element.accessible? '1':'0'}${element.unisex?'1':'0'}${element.changing_table?'1':'0'}.png`,
+                iconUrl: `./assets/icon/${element.accessible? '1':'0'}${element.unisex?'1':'0'}${element.changing_table?'1':'0'}.png`,
                 ...def_rst_set
             })
         }).addTo(map)
