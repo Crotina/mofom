@@ -1,0 +1,49 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+body {
+    background-color: rgb(125, 154, 200);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+section {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 80vw;
+    margin-bottom: 3em;
+}
+.title {
+    flex-direction: column;
+    text-align: center;
+}
+.title h1 {
+    font-size: 2em;
+    color: rgb(46, 53, 95);
+}
+
+.links {
+    flex-direction: column;
+    background-color: #8ca7df;
+    border-radius: 15px;
+    padding: 0px;
+}
+.links #linkslist {
+    width: 100%;
+    padding: 0px;
+    background-color: #fff;
+    border-radius: 0px 0px 15px 15px;
+    list-style: none;
+}
+.links h3 {
+    line-height: 2.2em;
+    color: #fff;
+}
+.links #linkslist li {
+    padding: 0.5em 1em;
+}
