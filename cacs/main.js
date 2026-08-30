@@ -22,12 +22,13 @@ const links = [
 ]
 
 const links_array = [
+    ['Weather', 'https://mofom.net/cacs/weather']
     ['2000+ free fonts', 'https://www.mediafire.com/folder/iqwqcm7d6xzi0/FREE_FONTS_(2100%2B_fonts)'],
     ["Restroom Finder", "https://mofom.net/cacs/restroomfinder"],
     ['Fun Fact Center', 'https://mofom.net/cacs/knowle'],
     ["Fun Fact Center (cat version)", 'https://mofom.net/cacs/knowle/cat'],
     ["countries test", 'https://mofom.net/cacs/country_test'],
-    ['Base defense Game', 'https://mofom.net/cacs/basedefence']
+    ['Base defense Game', 'https://mofom.net/cacs/basedefence'],
 ]
 
 const linkslist = document.getElementById("linkslist")
