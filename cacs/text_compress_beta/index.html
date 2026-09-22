@@ -5,16 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>TEXT COMPRESS ALGORITHM</title>
 <style>
+  @font-face {
+    font-family: dosis;
+    src: url(https://mofom.net/font/barlow_reg.ttf);
+  }
   :root{
-    --bg:#faf9f6;
+    --bg:#ffffff;
     --panel:#ffffff;
     --ink:#1b1b18;
-    --sub:#6b675f;
+    --sub:#1c1c75;
     --line:#e4e1d8;
-    --accent:#2f5d50;
+    --accent:#2f3d5d;
     --accent-ink:#ffffff;
-    --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-    --serif: Georgia, "Songti SC", "Noto Serif SC", serif;
+    --mono: Consolas, "Yahei", Menlo, monospace;
+    --serif: "dosis", "Microsoft Yahei", serif;
     box-sizing:border-box;
     padding-top: env(safe-area-inset-top, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -40,33 +44,33 @@
     width:100%; max-width:760px; padding:48px 24px 64px;
   }
   h1{
-    font-family: var(--serif); font-weight:600; font-size:1.6rem;
+    font-family: var(--serif); font-weight:600; font-size:3rem;
     margin:0 0 6px;
   }
   p.lede{
     color:var(--sub); margin:0 0 32px; max-width:60ch; line-height:1.6;
   }
   label{
-    display:block; font-size:.85rem; color:var(--sub); margin-bottom:8px;
+    display:block; font-size:1rem; color:var(--sub); margin-bottom:8px;
   }
   textarea{
     width:100%; min-height:140px; resize:vertical;
-    font-family: var(--mono); font-size:.92rem; line-height:1.5;
+    font-family: var(--mono); font-size:1.2rem; line-height:1.5;
     padding:14px; border:1px solid var(--line); border-radius:6px;
     background:var(--panel); color:var(--ink);
   }
   textarea:focus{ outline:2px solid var(--accent); outline-offset:1px; }
   .row{ display:flex; gap:12px; align-items:center; margin-top:14px; flex-wrap:wrap; }
   button{
-    font-family: var(--serif); font-size:.95rem; font-weight:600;
+    font-family: var(--serif); font-size:1.4rem; font-weight:600;
     padding:10px 20px; border-radius:6px; border:1px solid var(--accent);
     background:var(--accent); color:var(--accent-ink); cursor:pointer;
   }
   button:hover{ opacity:.9; }
   button:active{ transform:translateY(1px); }
-  .opt{ font-size:.82rem; color:var(--sub); display:flex; gap:6px; align-items:center; }
+  .opt{ font-size:1.2rem; color:var(--sub); display:flex; gap:6px; align-items:center; }
   .opt input{ width:56px; padding:3px 6px; font-family:var(--mono); border:1px solid var(--line);
-    border-radius:4px; background:var(--panel); color:var(--ink); }
+    border-radius:4px; background:var(--panel); color:var(--ink); font-size: 1.4rem; }
 
   section.result{ margin-top:36px; }
   .stat-grid{
@@ -80,16 +84,16 @@
   .stat.warn .num{ color:#b3492c; }
 
   pre{
-    font-family: var(--mono); font-size:.85rem; line-height:1.6;
+    font-family: var(--mono); font-size:1.4rem; line-height:1.6;
     background:var(--panel); border:1px solid var(--line); border-radius:6px;
     padding:14px; white-space:pre-wrap; word-break:break-word; overflow-x:auto;
     max-height:260px; overflow-y:auto;
   }
-  h2{ font-size:.95rem; margin:24px 0 8px; color:var(--sub); font-weight:600; }
-  .verify{ margin-top:10px; font-size:.85rem; }
+  h2{ font-size:1.3rem; margin:24px 0 8px; color:var(--sub); font-weight:600; }
+  .verify{ margin-top:10px; font-size:1.4rem; }
   .ok{ color:var(--accent); }
   .bad{ color:#b3492c; }
-  .empty{ color:var(--sub); font-size:.85rem; }
+  .empty{ color:var(--sub); font-size:1.4rem; }
 </style>
 </head>
 <body>
