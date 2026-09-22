@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TEXT COMPRESS ALGORITHM</title>
+<style>
+  :root{
+    --bg:#faf9f6;
+    --panel:#ffffff;
+    --ink:#1b1b18;
+    --sub:#6b675f;
+    --line:#e4e1d8;
+    --accent:#2f5d50;
+    --accent-ink:#ffffff;
+    --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    --serif: Georgia, "Songti SC", "Noto Serif SC", serif;
+    box-sizing:border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#15140f; --panel:#1d1c16; --ink:#f1efe6; --sub:#a8a394; --line:#33312a;
+      --accent:#7fb8a3; --accent-ink:#0f1210;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#15140f; --panel:#1d1c16; --ink:#f1efe6; --sub:#a8a394; --line:#33312a;
+    --accent:#7fb8a3; --accent-ink:#0f1210;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family: var(--serif);
+    display:flex; justify-content:center;
+  }
+  main{
+    width:100%; max-width:760px; padding:48px 24px 64px;
+  }
+  h1{
+    font-family: var(--serif); font-weight:600; font-size:1.6rem;
+    margin:0 0 6px;
+  }
+  p.lede{
+    color:var(--sub); margin:0 0 32px; max-width:60ch; line-height:1.6;
+  }
+  label{
+    display:block; font-size:.85rem; color:var(--sub); margin-bottom:8px;
+  }
+  textarea{
+    width:100%; min-height:140px; resize:vertical;
+    font-family: var(--mono); font-size:.92rem; line-height:1.5;
+    padding:14px; border:1px solid var(--line); border-radius:6px;
+    background:var(--panel); color:var(--ink);
+  }
+  textarea:focus{ outline:2px solid var(--accent); outline-offset:1px; }
+  .row{ display:flex; gap:12px; align-items:center; margin-top:14px; flex-wrap:wrap; }
+  button{
+    font-family: var(--serif); font-size:.95rem; font-weight:600;
+    padding:10px 20px; border-radius:6px; border:1px solid var(--accent);
+    background:var(--accent); color:var(--accent-ink); cursor:pointer;
+  }
+  button:hover{ opacity:.9; }
+  button:active{ transform:translateY(1px); }
+  .opt{ font-size:.82rem; color:var(--sub); display:flex; gap:6px; align-items:center; }
+  .opt input{ width:56px; padding:3px 6px; font-family:var(--mono); border:1px solid var(--line);
+    border-radius:4px; background:var(--panel); color:var(--ink); }
+
+  section.result{ margin-top:36px; }
+  .stat-grid{
+    display:grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
+    gap:1px; background:var(--line); border:1px solid var(--line); border-radius:8px;
+    overflow:hidden; margin-bottom:20px;
+  }
+  .stat{ background:var(--panel); padding:14px 16px; }
+  .stat .num{ font-family:var(--mono); font-size:1.25rem; }
+  .stat .cap{ color:var(--sub); font-size:.78rem; margin-top:4px; }
+  .stat.warn .num{ color:#b3492c; }
+
+  pre{
+    font-family: var(--mono); font-size:.85rem; line-height:1.6;
+    background:var(--panel); border:1px solid var(--line); border-radius:6px;
+    padding:14px; white-space:pre-wrap; word-break:break-word; overflow-x:auto;
+    max-height:260px; overflow-y:auto;
+  }
+  h2{ font-size:.95rem; margin:24px 0 8px; color:var(--sub); font-weight:600; }
+  .verify{ margin-top:10px; font-size:.85rem; }
+  .ok{ color:var(--accent); }
+  .bad{ color:#b3492c; }
+  .empty{ color:var(--sub); font-size:.85rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Text_compress_algorithm</h1>
+  <p class="lede">
+    MADE BY MELOKII OF MIRALOMA
+  </p>
+
+  <label for="enter">文本 text for compress</label>
+  <textarea id="enter" placeholder="text here plz"></textarea>
+
+  <div class="row">
+    <button id="compressBtn">压缩 compress</button>
+    <span class="opt">最短子串长度 minimum subtext length
+      <input type="number" id="minLen" value="3" min="2" max="20">
+    </span>
+    <span class="opt">最长子串长度 maximum subtext length
+      <input type="number" id="maxLen" value="30" min="3" max="80">
+    </span>
+  </div>
+
+  <section class="result" id="result" hidden>
+    <div class="stat-grid" id="statGrid"></div>
+
+    <h2>压缩后文本 compressed result</h2>
+    <pre id="compressedOut"></pre>
+
+    <h2>字典 dictionary</h2>
+    <pre id="dictOut"></pre>
+
+    <div class="verify" id="verify"></div>
+  </section>
+
+  <p class="empty" id="emptyHint">还没有输入内容 no available text yet!</p>
+</main>
+
+<script>
+/* ================================================================
+ * Improved Text Compression
+ *
+ * Main improvements over the original version:
+ *
+ * 1. Candidates are regenerated after every replacement.
+ * 2. The complete representation size is evaluated:
+ *
+ *      compressed text + dictionary
+ *
+ * 3. A replacement is only accepted if it actually reduces the
+ *    complete encoded size.
+ *
+ * 4. The algorithm tries multiple promising candidates instead of
+ *    blindly taking the longest substring.
+ *
+ * 5. Dictionary entries are kept independent, so decompression
+ *    remains deterministic and lossless.
+ *
+ * 6. The compressor performs several optimization passes until
+ *    no further improvement can be found.
+ *
+ * 7. The original UI and output format remain unchanged.
+ * ================================================================ */
+
+
+/* ---------------------------------------------------------------
+ * Replacement symbols
+ * ------------------------------------------------------------- */
+
+const REPLACEMENT_CHARS = [
+  "❶", "❷", "❸", "❹", "❺",
+  "❻", "❼", "❽", "❾", "❿"
+];
+
+
+/* ---------------------------------------------------------------
+ * Count non-overlapping occurrences.
+ *
+ * This is intentionally non-overlapping because one dictionary
+ * replacement cannot normally consume the same characters twice.
+ * ------------------------------------------------------------- */
+
+function countOccurrences(haystack, needle) {
+  if (!needle) return 0;
+
+  let count = 0;
+  let pos = 0;
+
+  while ((pos = haystack.indexOf(needle, pos)) !== -1) {
+    count++;
+    pos += needle.length;
+  }
+
+  return count;
+}
+
+
+/* ---------------------------------------------------------------
+ * Find all repeated substrings.
+ *
+ * IMPORTANT DIFFERENCE:
+ *
+ * The old program generated the candidates only once from the
+ * original input.
+ *
+ * This version can call this function again after every replacement.
+ *
+ * We also avoid generating enormous numbers of duplicate candidates.
+ * ------------------------------------------------------------- */
+
+function collectCandidates(text, minLen, maxLen) {
+  const freq = new Map();
+
+  if (!text || text.length < minLen) {
+    return freq;
+  }
+
+  const limit = Math.min(maxLen, text.length);
+
+  /*
+   * Longer substrings are considered first because they can provide
+   * large savings. Shorter substrings are still included because
+   * they can combine better with other dictionary entries.
+   */
+  for (let len = limit; len >= minLen; len--) {
+
+    for (let i = 0; i + len <= text.length; i++) {
+
+      const sub = text.slice(i, i + len);
+
+      if (freq.has(sub)) {
+        continue;
+      }
+
+      const count = countOccurrences(text, sub);
+
+      if (count >= 2) {
+        freq.set(sub, count);
+      }
+    }
+  }
+
+  return freq;
+}
+
+
+/* ---------------------------------------------------------------
+ * Calculate the size of a representation.
+ *
+ * This is the most important change conceptually.
+ *
+ * The old algorithm calculated the immediate gain of replacing
+ * one substring.
+ *
+ * Here we calculate the ACTUAL complete representation:
+ *
+ *     compressed string
+ *     +
+ *     dictionary
+ *
+ * This prevents a locally good replacement from making the final
+ * result worse.
+ * ------------------------------------------------------------- */
+
+function calculateRepresentationSize(compressed, dictionary) {
+
+  let dictionarySize = 0;
+
+  for (const [symbol, text] of dictionary) {
+    dictionarySize += symbol.length + text.length;
+  }
+
+  return compressed.length + dictionarySize;
+}
+
+
+/* ---------------------------------------------------------------
+ * Replace a substring everywhere.
+ *
+ * split/join is appropriate here because occurrences are explicitly
+ * treated as non-overlapping occurrences.
+ * ------------------------------------------------------------- */
+
+function replaceAllOccurrences(text, needle, replacement) {
+  if (!needle) {
+    return text;
+  }
+
+  return text.split(needle).join(replacement);
+}
+
+
+/* ---------------------------------------------------------------
+ * Check whether a candidate conflicts with already-used symbols.
+ *
+ * A dictionary substring containing a replacement symbol would make
+ * decoding ambiguous.
+ * ------------------------------------------------------------- */
+
+function candidateContainsUsedSymbol(candidate, dictionary) {
+
+  for (const [symbol] of dictionary) {
+
+    if (candidate.includes(symbol)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+
+/* ---------------------------------------------------------------
+ * Calculate the improvement produced by adding one dictionary entry.
+ * ------------------------------------------------------------- */
+
+function evaluateCandidate(compressed, dictionary, symbol, candidate) {
+
+  const occurrences = countOccurrences(compressed, candidate);
+
+  if (occurrences < 2) {
+    return null;
+  }
+
+  /*
+   * We need to know whether the candidate can actually be replaced.
+   */
+  const newCompressed =
+    replaceAllOccurrences(compressed, candidate, symbol);
+
+  const newDictionary = [
+    ...dictionary,
+    [symbol, candidate]
+  ];
+
+  const oldSize =
+    calculateRepresentationSize(compressed, dictionary);
+
+  const newSize =
+    calculateRepresentationSize(newCompressed, newDictionary);
+
+  const gain = oldSize - newSize;
+
+  if (gain <= 0) {
+    return null;
+  }
+
+  return {
+    candidate,
+    occurrences,
+    newCompressed,
+    newDictionary,
+    oldSize,
+    newSize,
+    gain
+  };
+}
+
+
+/* ---------------------------------------------------------------
+ * Find the best currently available replacement.
+ *
+ * Instead of simply calculating:
+ *
+ *   count * (length - 1)
+ *
+ * we calculate the REAL resulting representation size.
+ *
+ * We also use several tie breakers:
+ *
+ * 1. larger total gain
+ * 2. larger resulting gain per dictionary byte
+ * 3. longer candidate
+ * 4. more occurrences
+ *
+ * These tie breakers do not override the actual representation size;
+ * they only decide between candidates producing the same size.
+ * ------------------------------------------------------------- */
+
+function findBestReplacement(
+  compressed,
+  dictionary,
+  availableSymbols,
+  minLen,
+  maxLen
+) {
+
+  if (availableSymbols.length === 0) {
+    return null;
+  }
+
+  const candidates =
+    collectCandidates(compressed, minLen, maxLen);
+
+  let best = null;
+
+  /*
+   * Try every available symbol.
+   *
+   * Normally all symbols have length 1, but keeping the symbol
+   * parameter here makes the algorithm more general.
+   */
+  for (const symbol of availableSymbols) {
+
+    for (const candidate of candidates.keys()) {
+
+      /*
+       * A candidate that contains an existing replacement symbol
+       * cannot safely be inserted into the dictionary.
+       */
+      if (candidateContainsUsedSymbol(candidate, dictionary)) {
+        continue;
+      }
+
+      const result =
+        evaluateCandidate(
+          compressed,
+          dictionary,
+          symbol,
+          candidate
+        );
+
+      if (!result) {
+        continue;
+      }
+
+      if (!best) {
+        best = result;
+        continue;
+      }
+
+      /*
+       * Primary comparison: actual total representation size.
+       */
+      if (result.newSize < best.newSize) {
+        best = result;
+        continue;
+      }
+
+      if (result.newSize > best.newSize) {
+        continue;
+      }
+
+      /*
+       * Tie breaker #1:
+       * greater gain.
+       */
+      if (result.gain > best.gain) {
+        best = result;
+        continue;
+      }
+
+      if (result.gain < best.gain) {
+        continue;
+      }
+
+      /*
+       * Tie breaker #2:
+       * longer candidate.
+       */
+      if (result.candidate.length > best.candidate.length) {
+        best = result;
+        continue;
+      }
+
+      if (result.candidate.length < best.candidate.length) {
+        continue;
+      }
+
+      /*
+       * Tie breaker #3:
+       * more occurrences.
+       */
+      if (result.occurrences > best.occurrences) {
+        best = result;
+      }
+    }
+  }
+
+  return best;
+}
+
+
+/* ---------------------------------------------------------------
+ * Local optimization.
+ *
+ * This repeatedly searches for the best next dictionary entry.
+ *
+ * The important difference from the old algorithm is that candidates
+ * are rebuilt from the CURRENT compressed string every time.
+ *
+ * Therefore a replacement made in round 1 can expose a new useful
+ * pattern in round 2.
+ * ------------------------------------------------------------- */
+
+function greedyOptimize(input, minLen, maxLen) {
+
+  let compressed = input;
+  let dictionary = [];
+
+  /*
+   * Only symbols not present in the original text are usable.
+   *
+   * This prevents a real character from being mistaken for a
+   * dictionary reference during decompression.
+   */
+  const availableSymbols =
+    REPLACEMENT_CHARS.filter(
+      symbol => !input.includes(symbol)
+    );
+
+  while (dictionary.length < availableSymbols.length) {
+
+    const remainingSymbols =
+      availableSymbols.slice(dictionary.length);
+
+    const best =
+      findBestReplacement(
+        compressed,
+        dictionary,
+        remainingSymbols,
+        minLen,
+        maxLen
+      );
+
+    /*
+     * No profitable replacement remains.
+     */
+    if (!best) {
+      break;
+    }
+
+    compressed = best.newCompressed;
+    dictionary = best.newDictionary;
+  }
+
+  return {
+    compressed,
+    dictionary,
+    size: calculateRepresentationSize(
+      compressed,
+      dictionary
+    )
+  };
+}
+
+
+/* ---------------------------------------------------------------
+ * Generate alternative optimization orders.
+ *
+ * Greedy optimization can still get trapped in a local optimum.
+ *
+ * To improve this, we try several different candidate preferences.
+ *
+ * For a short text like the user's example, this is cheap enough
+ * to be practical.
+ * ------------------------------------------------------------- */
+
+function optimizeWithMultipleStarts(
+  input,
+  minLen,
+  maxLen
+) {
+
+  /*
+   * First strategy:
+   * normal greedy optimization.
+   */
+  const strategies = [];
+
+  strategies.push(
+    greedyOptimize(
+      input,
+      minLen,
+      maxLen
+    )
+  );
+
+
+  /*
+   * Second strategy:
+   *
+   * Try increasing minimum substring lengths.
+   *
+   * This can avoid situations where a short repeated substring
+   * consumes a symbol that would be more useful for a longer
+   * substring.
+   */
+  const alternateMinLens = new Set();
+
+  alternateMinLens.add(minLen);
+
+  for (
+    let value = minLen + 1;
+    value <= Math.min(maxLen, minLen + 5);
+    value++
+  ) {
+    alternateMinLens.add(value);
+  }
+
+  for (const alternateMin of alternateMinLens) {
+
+    if (alternateMin > maxLen) {
+      continue;
+    }
+
+    strategies.push(
+      greedyOptimize(
+        input,
+        alternateMin,
+        maxLen
+      )
+    );
+  }
+
+
+  /*
+   * Third strategy:
+   *
+   * Restrict maximum candidate length slightly.
+   *
+   * This is useful because very long repeated strings can sometimes
+   * consume dictionary opportunities that would be better divided
+   * into reusable pieces.
+   */
+  const alternateMaxLens = new Set();
+
+  alternateMaxLens.add(maxLen);
+
+  for (
+    let value = maxLen - 5;
+    value >= minLen;
+    value--
+  ) {
+    alternateMaxLens.add(value);
+  }
+
+  for (const alternateMax of alternateMaxLens) {
+
+    strategies.push(
+      greedyOptimize(
+        input,
+        minLen,
+        alternateMax
+      )
+    );
+  }
+
+
+  /*
+   * Choose the smallest COMPLETE representation.
+   */
+  let best = strategies[0];
+
+  for (const result of strategies) {
+
+    if (result.size < best.size) {
+      best = result;
+    }
+  }
+
+  return [
+    best.compressed,
+    best.dictionary
+  ];
+}
+
+
+/* ---------------------------------------------------------------
+ * Main compression function.
+ *
+ * This replaces the original compressText().
+ * ------------------------------------------------------------- */
+
+function compressText(input, options = {}) {
+
+  const minLen =
+    Math.max(
+      2,
+      options.minLen ?? 3
+    );
+
+  const maxLen =
+    Math.max(
+      minLen,
+      options.maxLen ?? 30
+    );
+
+  if (!input) {
+    return [input, []];
+  }
+
+  /*
+   * If every replacement symbol already exists in the input,
+   * none can safely be used.
+   */
+  const usableSymbols =
+    REPLACEMENT_CHARS.filter(
+      symbol => !input.includes(symbol)
+    );
+
+  if (usableSymbols.length === 0) {
+    return [input, []];
+  }
+
+  /*
+   * Run the improved multi-start optimizer.
+   */
+  return optimizeWithMultipleStarts(
+    input,
+    minLen,
+    maxLen
+  );
+}
+
+
+/* ---------------------------------------------------------------
+ * Decompression
+ *
+ * Dictionary entries are expanded in reverse order.
+ *
+ * This is important because a future dictionary entry may contain
+ * a symbol that was created by an earlier dictionary entry.
+ *
+ * The current compressor does not intentionally create nested
+ * dictionary entries, but reverse order keeps the decoder robust.
+ * ------------------------------------------------------------- */
+
+function decompressText(compressed, dictionary) {
+
+  let result = compressed;
+
+  for (
+    let i = dictionary.length - 1;
+    i >= 0;
+    i--
+  ) {
+
+    const [symbol, text] =
+      dictionary[i];
+
+    result =
+      result.split(symbol).join(text);
+  }
+
+  return result;
+}
+
+
+/* ---------------------------------------------------------------
+ * Compression statistics
+ *
+ * This part was already conceptually correct in the original app.
+ *
+ * The dictionary itself is included in the compressed size.
+ * ------------------------------------------------------------- */
+
+function calculateCompressionRate(
+  originalString,
+  compressedResult
+) {
+
+  const [
+    compressedString,
+    dictionary
+  ] = compressedResult;
+
+  const originalstringsize =
+    originalString.length;
+
+  const compressedstringsize =
+    compressedString.length;
+
+  let dictionarysize = 0;
+
+  for (const [symbol, text] of dictionary) {
+
+    dictionarysize +=
+      symbol.length + text.length;
+  }
+
+  const totalcompressedsize =
+    compressedstringsize +
+    dictionarysize;
+
+  const compresspercent =
+    originalstringsize === 0
+      ? 0
+      : (
+          (
+            originalstringsize -
+            totalcompressedsize
+          ) /
+          originalstringsize
+        ) * 100;
+
+  return {
+    originalstringsize,
+    compressedstringsize,
+    dictionarysize,
+    totalcompressedsize,
+    compresspercent
+  };
+}
+
+
+/* ================================================================
+ * UI BINDING
+ *
+ * Everything below this point can remain essentially the same.
+ * ================================================================ */
+
+const enter =
+  document.getElementById('enter');
+
+const compressBtn =
+  document.getElementById('compressBtn');
+
+const minLenInput =
+  document.getElementById('minLen');
+
+const maxLenInput =
+  document.getElementById('maxLen');
+
+const resultSection =
+  document.getElementById('result');
+
+const emptyHint =
+  document.getElementById('emptyHint');
+
+const statGrid =
+  document.getElementById('statGrid');
+
+const compressedOut =
+  document.getElementById('compressedOut');
+
+const dictOut =
+  document.getElementById('dictOut');
+
+const verifyEl =
+  document.getElementById('verify');
+
+
+/* ---------------------------------------------------------------
+ * Create statistic card.
+ * ------------------------------------------------------------- */
+
+function stat(num, cap, warn) {
+
+  const div =
+    document.createElement('div');
+
+  div.className =
+    'stat' +
+    (warn ? ' warn' : '');
+
+  div.innerHTML =
+    `<div class="num"></div>
+     <div class="cap"></div>`;
+
+  div.querySelector('.num').textContent =
+    num;
+
+  div.querySelector('.cap').textContent =
+    cap;
+
+  return div;
+}
+
+
+/* ---------------------------------------------------------------
+ * Run compression and update UI.
+ * ------------------------------------------------------------- */
+
+function runCompress() {
+
+  const text =
+    enter.value;
+
+  if (!text) {
+
+    resultSection.hidden = true;
+    emptyHint.hidden = false;
+
+    return;
+  }
+
+  emptyHint.hidden = true;
+
+
+  const minLen =
+    Math.max(
+      2,
+      parseInt(
+        minLenInput.value,
+        10
+      ) || 3
+    );
+
+
+  const maxLen =
+    Math.max(
+      minLen,
+      parseInt(
+        maxLenInput.value,
+        10
+      ) || 30
+    );
+
+
+  const [
+    compressedString,
+    dictionary
+  ] =
+    compressText(
+      text,
+      {
+        minLen,
+        maxLen
+      }
+    );
+
+
+  const stats =
+    calculateCompressionRate(
+      text,
+      [
+        compressedString,
+        dictionary
+      ]
+    );
+
+
+  /*
+   * textContent is intentionally used instead of innerHTML.
+   *
+   * This prevents compressed text from being interpreted as HTML.
+   */
+  compressedOut.textContent =
+    compressedString || '(空 blank)';
+
+
+  dictOut.textContent =
+    dictionary.length
+      ? dictionary
+          .map(
+            ([sym, sub]) =>
+              `${sym}  =  ${sub}`
+          )
+          .join('\n')
+      : '(没有找到值得替换的重复子串 nothing found for compress)';
+
+
+  /*
+   * Update statistics.
+   */
+  statGrid.innerHTML = '';
+
+
+  statGrid.appendChild(
+    stat(
+      stats.originalstringsize,
+      '原始字符数 original text length'
+    )
+  );
+
+
+  statGrid.appendChild(
+    stat(
+      stats.compressedstringsize,
+      '压缩后字符串长度 text size after compressing'
+    )
+  );
+
+
+  statGrid.appendChild(
+    stat(
+      stats.dictionarysize,
+      '字典占用 size of dictionary'
+    )
+  );
+
+
+  statGrid.appendChild(
+    stat(
+      stats.totalcompressedsize,
+      '总大小 total size after compress'
+    )
+  );
+
+
+  statGrid.appendChild(
+    stat(
+      stats.compresspercent.toFixed(1) + '%',
+      '压缩率 compress rate',
+      stats.compresspercent <= 0
+    )
+  );
+
+
+  /*
+   * Verify losslessness.
+   */
+  const restored =
+    decompressText(
+      compressedString,
+      dictionary
+    );
+
+
+  const ok =
+    restored === text;
+
+
+  verifyEl.innerHTML = '';
+
+
+  const span =
+    document.createElement('span');
+
+  span.className =
+    ok
+      ? 'ok'
+      : 'bad';
+
+  span.textContent =
+    ok
+      ? '✓ 解压结果与原文一致 VERIFIED'
+      : '✗ 解压结果与原文不一致 OH NO BUG, VERIFICATION FAILED';
+
+  verifyEl.appendChild(span);
+
+
+  resultSection.hidden = false;
+}
+
+
+/* ---------------------------------------------------------------
+ * Button event.
+ * ------------------------------------------------------------- */
+
+compressBtn.addEventListener(
+  'click',
+  runCompress
+);
+
+</script>
+</body>
+</html>

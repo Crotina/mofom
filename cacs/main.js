@@ -22,6 +22,7 @@ const links = [
 ]
 
 const links_array = [
+    ['MATADOR\'S TEXT COMPRESS HELPER', 'https://mofom.net/cacs/text_compress_beta'],
     ['Weather', 'https://mofom.net/cacs/weather'],
     ['2000+ free fonts', 'https://www.mediafire.com/folder/iqwqcm7d6xzi0/FREE_FONTS_(2100%2B_fonts)'],
     ["Restroom Finder", "https://mofom.net/cacs/restroomfinder"],
